@@ -28,12 +28,8 @@ abstract class ContaBancaria{
     $this->numero = $set;
   }
 
-  function sacar($quantia){
-    $this->saldo = $this->saldo - $quantia;
-  }
+  abstract function sacar($quantia);
 
-  function depositar($quantia){
-    $this->saldo = $this->saldo + $quantia;
-  }
+  abstract function depositar($quantia);
 }
 ?>

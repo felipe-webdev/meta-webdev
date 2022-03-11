@@ -13,5 +13,9 @@ class ContaPoupanca extends ContaBancaria{
   function depositar($quantia){
     $this->saldo = $this->saldo + ($quantia + $this->jurosDeposito);
   }
+
+  function sacar($quantia){
+    $this->saldo = $this->saldo - $quantia;
+  }
 }
 ?>

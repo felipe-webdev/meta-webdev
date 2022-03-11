@@ -10,6 +10,10 @@ class ContaCorrente extends ContaBancaria{
     $this->taxaSaque = $set;
   }
 
+  function depositar($quantia){
+    $this->saldo = $this->saldo + $quantia;
+  }
+
   function sacar($quantia){
     $this->saldo = $this->saldo - ($quantia + $this->taxaSaque);
   }

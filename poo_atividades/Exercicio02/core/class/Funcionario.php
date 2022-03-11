@@ -37,9 +37,6 @@ abstract class Funcionario{
     $this->salario = $set;
   }
 
-  function bonificacao(){
-    $bonificacao = $this->salario * 0.10 / 100;
-    return $bonificacao;
-  }
+  abstract function bonificacao();
 }
 ?>
