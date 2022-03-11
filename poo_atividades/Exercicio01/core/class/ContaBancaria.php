@@ -1,5 +1,5 @@
 <?php
-class ContaBancaria{
+abstract class ContaBancaria{
   protected $titular;
   protected $saldo;
   protected $numero;

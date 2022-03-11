@@ -1,4 +1,9 @@
-<?php
+<html>
+  <head>
+
+  </head>
+  <body>
+  <?php
 include "/core/class/ContaCorrente.php";
 include "/core/class/ContaPoupanca.php";
 
@@ -14,4 +19,11 @@ $conta_poupanca1->setNumero(0001);
 $conta_poupanca1->setSaldo(0);
 $conta_poupanca1->setJurosDeposito(22);
 
+$conta_corrente1->depositar(111);
+$conta_poupanca1->depositar(222);
+
+echo ("O titular da conta poupança N".$conta_poupanca1->getNumero()." É: ".$conta_poupanca1->getTitular()."<br/>");
+
 ?>
+  </body>
+</html>
