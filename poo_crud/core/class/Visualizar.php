@@ -2,7 +2,7 @@
 /* CHECAR A EXISTÊNCIA DO PARÂMETRO ID ANTES DE CONTINUAR O PROCESSO */
 if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
   /* INCLUIR ARQUIVO DE CONFIGURAÇÃO */
-  require_once "config.php";
+  require_once "Conexao.php";
   
   /* PREPARAR COMANDO SELECT */
   $sql = "SELECT * FROM funcionarios WHERE id = ?";
@@ -64,7 +64,7 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
 </head>
 <body>
   <div class="wrapper">
-    <img class="img-fluid" src="public/img/crud1.png">
+    <img class="img-fluid" src="../../public/img/crud1.png">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">

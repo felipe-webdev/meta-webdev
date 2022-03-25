@@ -1,6 +1,6 @@
 <?php
 /* INCLUIR ARQUIVO DE CONFIGURAÇÃO */
-require_once "config.php";
+require_once "Conexao.php";
 
 /* DEFINIR VARIÁVEIS E ATRIBUIR STRING VAZIA */
 $nome = $endereco = $salario = "";
@@ -136,7 +136,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 </head>
 <body>
   <div class="wrapper">
-    <img class="img-fluid" src="public/img/crud1.png">
+    <img class="img-fluid" src="../../public/img/crud1.png">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">

@@ -13,7 +13,7 @@
 </head>
 <body>
   <div class="wrapper">
-    <img class="img-fluid" src="public/img/crud1.png">
+    <img class="img-fluid" src="../../public/img/crud1.png">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">

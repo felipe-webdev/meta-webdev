@@ -2,7 +2,7 @@
 /* EXECUTAR OPERAÇÃO APÓS CONFIRMAÇÃO */
 if(isset($_POST["id"]) && !empty($_POST["id"])){
   /* INCLUIR ARQUIVO DE CONFIGURAÇÃO */
-  require_once "config.php";
+  require_once "Conexao.php";
   
   /* PREPARAR COMANDO DELETE */
   $sql = "DELETE FROM funcionarios WHERE id = ?";
@@ -54,7 +54,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 </head>
 <body>
   <div class="wrapper">
-    <img class="img-fluid" src="public/img/crud1.png">
+    <img class="img-fluid" src="../../public/img/crud1.png">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">

@@ -31,13 +31,13 @@
         <div class="col-md-12">
           <div class="mt-5 mb-3 clearfix">
             <h2 class="pull-left">Listar Funcionários</h2>
-            <a href="create.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i>Adicionar Funcionário</a>
+            <a href="core/class/Criar.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i>Adicionar Funcionário</a>
           </div>
           <?php
-          // Include config file
-          require_once "config.php";
+          // INCLUIR ARQUIVO DE CONEXÃO
+          require_once "core/class/Conexao.php";
           
-          // Attempt select query execution
+          // TENTATIVA DE SELECT
           $sql = "SELECT * FROM funcionarios";
           if($result = $mysqli->query($sql)){
             if($result->num_rows > 0){
@@ -59,15 +59,15 @@
                     echo "<td>" . $row['endereco'] . "</td>";
                     echo "<td>" . $row['salario'] . "</td>";
                     echo "<td>";
-                      echo '<a href="read.php?id='. $row['id'] .'" class="mr-3" title="Visualizar Registro" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
-                      echo '<a href="update.php?id='. $row['id'] .'" class="mr-3" title="Atualizar Registro" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>';
-                      echo '<a href="delete.php?id='. $row['id'] .'" title="Apagar Registro" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                      echo '<a href="core/class/Visualizar.php?id='. $row['id'] .'" class="mr-3" title="Visualizar Registro" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
+                      echo '<a href="core/class/Atualizar.php?id='. $row['id'] .'" class="mr-3" title="Atualizar Registro" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>';
+                      echo '<a href="core/class/Deletar.php?id='. $row['id'] .'" title="Apagar Registro" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
                     echo "</td>";
                   echo "</tr>";
                 }
                 echo "</tbody>";              
               echo "</table>";
-              // Free result set
+              // LIBERAR RESULTADO
               $result->free();
             } else{
               echo '<div class="alert alert-danger"><em>Nenhum registro encontrado.</em></div>';
@@ -75,8 +75,7 @@
           } else{
             echo "Oops! Algo deu errado. Tente novamente mais tarde.";
           }
-          
-          // Close connection
+          // FECHAR CONEXÃO
           $mysqli->close();
           ?>
         </div>
