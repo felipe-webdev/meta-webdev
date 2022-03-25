@@ -1,11 +1,10 @@
 <html>
   <head>
-
   </head>
   <body>
     <?php
-      include "/core/class/Secretario.php";
-      include "/core/class/Gerente.php";
+      include "core/class/Secretario.php";
+      include "core/class/Gerente.php";
 
       $secretario_1 = new Secretario();
       $secretario_1->setNome("Felipe Fernandes");

@@ -1,11 +1,10 @@
 <html>
   <head>
-
   </head>
   <body>
     <?php
-      include "/core/class/ContaCorrente.php";
-      include "/core/class/ContaPoupanca.php";
+      include "core/class/ContaCorrente.php";
+      include "core/class/ContaPoupanca.php";
 
       $conta_corrente1 = new ContaCorrente();
       $conta_corrente1->setTitular("Felipe Fernandes");
@@ -22,7 +21,7 @@
       $conta_corrente1->depositar(111);
       $conta_poupanca1->depositar(222);
 
-      echo ("O titular da conta poupança N".$conta_poupanca1->getNumero()." É: ".$conta_poupanca1->getTitular()."<br/>");
+      echo ("O titular da conta poupança Nº".$conta_poupanca1->getNumero()." É: ".$conta_poupanca1->getTitular()."<br/>");
     ?>
   </body>
 </html>

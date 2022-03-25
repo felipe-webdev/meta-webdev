@@ -1,4 +1,5 @@
 <?php
+include_once "ContaBancaria.php";
 class ContaCorrente extends ContaBancaria{
   protected $taxaSaque;
 

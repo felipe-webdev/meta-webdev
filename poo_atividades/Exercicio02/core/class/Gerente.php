@@ -1,4 +1,5 @@
 <?php
+include_once "Funcionario.php";
 class Gerente extends Funcionario{
   protected $login;
   protected $senha;

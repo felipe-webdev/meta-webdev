@@ -1,4 +1,5 @@
 <?php
+include_once "Funcionario.php";
 class Secretario extends Funcionario{
   protected $ramal;
 
