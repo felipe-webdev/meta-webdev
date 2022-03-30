@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <title>Praticando JavaScript</title>
+    <meta charset="UTF-8">
+    <style>
+      #tabelaHistorico {
+        /* border-color: rgb(35, 0, 160);
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 4px; */
+        padding-left: 120px;
+        padding-bottom: 16px;
+        font-family: monospace;
+        font-size: 16px;
+        color: rgb(0, 0, 87);
+        /* margin-left: 80px;
+        margin-bottom: 12px; */
+      }
+      th, td {
+        /* font-family: monospace; */
+        border-color: rgb(35, 0, 160);
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 4px;
+        padding: 4px;
+        transition: transform 500ms;
+      }
+      td:hover {
+        border-color: rgb(168, 0, 168);
+        transform: scale(1.4)
+      }
+    </style>
+  </head>
+  <body>
+    <h2 style="font-family: sans-serif; font-size: 20px; color: rgb(0, 0, 87);"
+    >
+      Praticando JavaScript
+    </h2>
+    <P id="pTeste"
+      style="font-family: sans-serif; font-size: 16px; color: rgb(0, 0, 87);"
+    >
+      O que acontece se você apertar o botão "<b>Aperte-me!</b>" ???
+    </P>
+    <table id="tabelaHistorico">
+      <tr><th>Histórico de Somas</th></tr>
+    </table>
+    <button type="button"
+      style="background-color:rgb(9, 0, 129); font-family: sans-serif; font-size: 16px; color: azure; border-radius: 4px;"
+      onclick="document.getElementById('pTeste').innerHTML='PARE DE SER CURIOSO E VÁ FAZER UMAS SOMAS!'"
+    >
+      Aperte-me!
+    </button>
+    <button type="button"
+      style="background-color:rgb(51, 0, 172); font-family: sans-serif; font-size: 16px; color: azure; border-radius: 4px;"
+      onclick="funcaoSoma();"
+    >
+      Faça uma soma!
+    </button>
+    <button type="button"
+      style="background-color: rgb(102, 0, 197); font-family: sans-serif; font-size: 16px; color: azure; border-radius: 4px;"
+      onclick="meNotificar();"
+    >
+      Notificar para fazer soma!
+    </button>
+    <script>
+      function funcaoSoma(){
+        $n1 = Number(prompt('Digite o primeiro número!'));
+        $n2 = Number(prompt('Digite o segundo número!'));
+        $soma = $n1 + $n2;
+        funcaoHistorico($n1, $n2, $soma);
+        alert('A soma dos números é = ' + $soma);
+      }
+      function funcaoHistorico(numero1, numero2, resultado){
+        $historico = '<tr><td>' + numero1 + ' + ' + numero2 + ' = ' + resultado + '</td></tr>';
+        document.getElementById('tabelaHistorico').innerHTML+=$historico;
+      }
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!Notification) {
+          alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.'); 
+          return;
+        }
+        if (Notification.permission !== "granted")
+          Notification.requestPermission();
+      });
+      function meNotificar() {
+        if (Notification.permission !== "granted")
+          Notification.requestPermission();
+        else {
+          var notification = new Notification('Notificação', {
+            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+            body: "Olá! Você realizará uma soma!",
+          });
+          notification.onclick = function () {
+            funcaoSoma();
+            // window.open("COLOQUE UMA URL");
+          };
+        }
+      }
+    </script>
+  </body>
+</html>
