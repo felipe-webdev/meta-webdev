@@ -4,7 +4,18 @@
     <title>Qual é o Animal?</title>
     <style>
       body {
-        background-color: dimgray;
+        background-color: darkolivegreen;
+      }
+      a:link {
+        font-family: sans-serif;
+        text-decoration: none;
+        color: lightseagreen;
+      }
+      a:visited {
+        color: lightseagreen;
+      }
+      a:hover {
+        color: burlywood;
       }
       h1, h3, #enviar, button, select {
         font-family: sans-serif;
@@ -55,6 +66,7 @@
     </style>
   </head>
   <body>
+    <a href="usando_apenas_php.php">Usar a versão <b>Somente PHP</b></a>
     <h1>Qual é o Animal?</h1>
     <div id="filtros">
       <select name="filtro_1" id="filtro_1">
