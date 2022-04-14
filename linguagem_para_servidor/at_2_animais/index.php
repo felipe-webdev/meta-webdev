@@ -7,6 +7,11 @@
         background-color: darkolivegreen;
       }
       a:link {
+        display: inline-block;
+        padding: 4px;
+        border-bottom: 4px;
+        border-bottom-style: solid;
+        border-bottom-color: darkslategray;
         font-family: sans-serif;
         text-decoration: none;
         color: lightseagreen;
@@ -66,8 +71,9 @@
     </style>
   </head>
   <body>
-    <a href="usando_apenas_php.php">Usar a versão <b>Somente PHP</b></a>
-    <h1>Qual é o Animal?</h1>
+    <a href="usando_apenas_php.php">Usar a Versão <b>Sem JavaScript</b></a>
+    <a href="front_end.html">Usar a Versão <b>HTML e PHP Separados</b></a>
+    <h1>Qual é o Animal? Versão: Com JavaScript</h1>
     <div id="filtros">
       <select name="filtro_1" id="filtro_1">
         <option value="1" descricao="Mamíferos">Mamíferos</option>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qual é o Animal? (Versão com JavaScript)</title>
+</head>
+<body>
+  <h1>Qual é o Animal? Versão: HTML e PHP Separados</h1>
+  <form action="php/back_end.php" method="post">
+    Selecione o tipo de animal: 
+    <select name="animal" required>
+      <option value="">Selecione Aqui...</option>
+      <option value="Mamíferos">Mamíferos</option>
+      <option value="Mamíferos">Mamíferos</option>
+      <option value="Mamíferos">Mamíferos</option>
+    </select>
+    <br/>
+    Selecione a categoria do animal: 
+    <select name="categoria" required>
+      <option value="">Selecione Aqui...</option>
+      <option value="Quadrúpedes">Quadrúpedes</option>
+      <option value="Bípedes">Bípedes</option>
+      <option value="Voador">Voador</option>
+      <option value="Aquático">Aquático</option>
+    </select>
+    <br/>
+    Selecione a alimentação do animal: 
+    <select name="alimentacao" required>
+      <option value="">Selecione Aqui...</option>
+      <option value="Carnívoro">Carnívoro</option>
+      <option value="Herbívoro">Herbívoro</option>
+      <option value="Onívoro">Onívoro</option>
+      <option value="Frutívoro">Frutívoro</option>
+    </select>
+    <br/>
+    <input type="submit" name="btn_verificar" value="Verificar"/>
+  </form>
+</body>
+</html>

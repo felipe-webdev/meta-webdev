@@ -21,7 +21,7 @@
     </style>
   </head>
   <body>
-    <h1>Qual é o Animal? (Versão Somente Com PHP)</h1>
+    <h1>Qual é o Animal? Versão: Sem JavaScript</h1>
     <?php
       if (!isset($_POST["resposta"])) {
         echo ('<h2>Selecione uma opção e aperte em Próximo!</h2>'.
