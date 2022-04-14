@@ -1,0 +1,302 @@
+<html>
+  <head>
+    <title>Praticando JavaScript</title>
+    <meta charset="UTF-8">
+    <style>
+      h2, p {
+        width: 75%;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        font-family: sans-serif;
+        color: rgb(0, 0, 87);
+      }
+      #botoesTabela, #operacoes, #notificacoes {
+        /* justify-content: center;
+        align-items: center; */
+        margin: auto;
+        width: 75%;
+      }
+      .operacao {
+        display: inline-block;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        background-color:rgb(51, 0, 172);
+        font-family: sans-serif;
+        font-size: 16px;
+        color: azure;
+        border-radius: 4px;
+      }
+      #tabelaHistorico {
+        margin: auto;
+        width: 75%;
+        padding-bottom: 8px;
+        font-family: monospace;
+        font-size: 16px;
+        color: rgb(0, 0, 87);
+      }
+      th, td {
+        border-color: rgb(35, 0, 160);
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 4px;
+        padding: 4px;
+        transition: transform 500ms;
+      }
+      td:hover {
+        border-color: rgb(168, 0, 168);
+        transform: scale(1.1)
+      }
+      .bounce-enter-active {
+        animation: bounce-in .5s;
+      }
+      .bounce-leave-active {
+        animation: bounce-in .5s reverse;
+      }
+      @keyframes bounce-in {
+        0% {
+          transform: scale(0);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2 style="font-size: 20px;"
+    >
+      Praticando JavaScript
+    </h2>
+    <!-- <P id="pTeste"
+      style="font-size: 16px;"
+    >
+      O que acontece se você apertar o botão "<b>Aperte-me!</b>" ???
+    </P> -->
+    <div id="meuvueapp">
+      <table id="tabelaHistorico"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
+          <tr><th>HISTÓRICO DE CALCULO</th></tr>
+          <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
+          <!-- <tr
+          v-for="item in meuarray"
+          v-bind:operacaohistorico="item"
+          v-bind:key="item.id"
+          >
+            <td>
+              {{item.texto}}
+            </td>
+          </tr> -->
+          <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
+          <transition name="bounce-in">
+          <tr is="meu-componente"
+            v-for="item in meuarray"
+            v-bind:operacaohistorico="item"
+            v-bind:key="item.id"
+          >
+          </tr>
+          </transition>
+          <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
+          <!-- <template>
+            <component is="meu-componente"
+              v-for="item in meuarray"
+              v-bind:operacaohistorico="item"
+              v-bind:key="item.id"
+            >
+            </component>
+          </template> -->
+          <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <nome-do-componente> -->
+          <!-- <template>
+            <meu-componente 
+              v-for="item in meuarray"
+              v-bind:operacaohistorico="item"
+              v-bind:key="item.id"
+            >
+            </meu-componente>
+          </template> -->
+      </table>
+      <div id="botoesTabela">
+        <!-- <button type="button" class="operacao"
+          style="background-color:rgb(170, 0, 170);"
+          onclick="document.getElementById('pTeste').innerHTML='<b>PARE DE SER CURIOSO E VÁ FAZER UMS CÁLCULOS!</b>'"
+        >
+          Aperte-me!
+        </button> -->
+        <button type="button" class="operacao"
+          style="background-color:rgb(170, 0, 170);"
+          v-on:click="limparHistorico"
+          onclick="contador = 0"
+        >
+          Limpar Histórico!
+        </button>
+      </div>
+    </div>
+    <div id="operacoes">
+      <button type="button" class="operacao"
+        onclick="funcaoSoma();"
+      >
+        Faça uma soma!
+      </button>
+      <button type="button" class="operacao"
+        onclick="funcaoSubtracao();"
+      >
+        Faça uma subtração!
+      </button>
+      <button type="button" class="operacao"
+        onclick="funcaoMultiplicacao();"
+      >
+        Faça uma multiplicação!
+      </button>
+      <button type="button" class="operacao"
+        onclick="funcaoDivisao();"
+      >
+        Faça uma divisão!
+      </button>
+    </div>
+    <div id="notificacoes">
+      <button type="button" class="operacao"
+        style="background-color: rgb(102, 0, 197);"
+        onclick="meNotificar('+');"
+      >
+        Notificar soma!
+      </button>
+      <button type="button" class="operacao"
+        style="background-color: rgb(102, 0, 197);"
+        onclick="meNotificar('-');"
+      >
+        Notificar subtração!
+      </button>
+      <button type="button" class="operacao"
+        style="background-color: rgb(102, 0, 197);"
+        onclick="meNotificar('*');"
+      >
+        Notificar multiplicação!
+      </button>
+      <button type="button" class="operacao"
+        style="background-color: rgb(102, 0, 197);"
+        onclick="meNotificar('/');"
+      >
+        Notificar divisão!
+      </button>
+    </div>
+    <!-- VUE.JS V2 DESENVOLVIMENTO -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- VUE.JS V2 PRODUÇÃO -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+    <script>
+      Vue.component('meu-componente', {
+          props: ['operacaohistorico'],
+          template: '<tr><td>{{ operacaohistorico.texto }}</td></tr>'
+      });
+      let meuvueapp = new Vue({
+        el: '#meuvueapp',
+        data: {
+          meuarray: [
+            // { id: 1, texto: 'texto1' },
+            // { id: 2, texto: 'texto2' },
+            // { id: 3, texto: 'texto3' }
+          ]
+        },
+        methods: {
+          limparHistorico(){this.meuarray = [];}
+        }
+      });
+      contador = 0;
+      function funcaoSoma(){
+        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        res = n1 + n2;
+        contador++;
+        funcaoHistorico(n1, n2, res, '+');
+        alert('A soma dos números é = ' + res);
+      }
+      function funcaoSubtracao(){
+        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        res = n1 - n2;
+        contador++;
+        funcaoHistorico(n1, n2, res, '-');
+        alert('A subtração dos números é = ' + res);
+      }
+      function funcaoMultiplicacao(){
+        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        res = n1 * n2;
+        contador++;
+        funcaoHistorico(n1, n2, res, 'x');
+        alert('A multiplicação dos números é = ' + res);
+      }
+      function funcaoDivisao(){
+        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+        res = n1 / n2;
+        contador++;
+        funcaoHistorico(n1, n2, res, '/');
+        alert('A divisão dos números é = ' + res);
+      }
+      // function funcaoHistorico(numero1, numero2, resultado, operacao){
+      //   historico = '<tr><td>' + numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado + '</td></tr>';
+      //   document.getElementById('tabelaHistorico').innerHTML+=historico;
+      // }
+      function funcaoHistorico(numero1, numero2, resultado, operacao){
+        historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
+        meuvueapp._data.meuarray.push({ "id":contador, "texto":historico });
+      }
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!Notification) {
+          alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.'); 
+          return;
+        }
+        if (Notification.permission !== "granted")
+          Notification.requestPermission();
+      });
+      function meNotificar(operacao) {
+        if (Notification.permission !== "granted") {
+          Notification.requestPermission();
+        }
+        if (operacao == '+') {
+          var notification = new Notification('Notificação', {
+            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+            body: "Olá! Você realizará uma soma!",
+          });
+          notification.onclick = function () {
+            funcaoSoma();
+            // window.open("COLOQUE UMA URL");
+          };
+        } else if (operacao == '-') {
+          var notification = new Notification('Notificação', {
+            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+            body: "Olá! Você realizará uma subtração!",
+          });
+          notification.onclick = function () {
+            funcaoSubtracao();
+            // window.open("COLOQUE UMA URL");
+          };
+        } else if (operacao == '*') {
+          var notification = new Notification('Notificação', {
+            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+            body: "Olá! Você realizará uma multiplicação!",
+          });
+          notification.onclick = function () {
+            funcaoMultiplicacao();
+            // window.open("COLOQUE UMA URL");
+          };
+        }
+        else if (operacao == '/') {
+          var notification = new Notification('Notificação', {
+            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+            body: "Olá! Você realizará uma divisão!",
+          });
+          notification.onclick = function () {
+            funcaoDivisao();
+            // window.open("COLOQUE UMA URL");
+          };
+        }
+      }
+    </script>
+  </body>
+</html>
