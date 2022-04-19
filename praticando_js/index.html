@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Praticando JavaScript</title>
+    <title>Praticando JavaScript com VUE.JS</title>
     <meta charset="UTF-8">
     <style>
       h2, p {
@@ -49,60 +49,38 @@
         border-color: rgb(168, 0, 168);
         transform: scale(1.1)
       }
-      .bounce-enter-active {
-        animation: bounce-in .5s;
-      }
-      .bounce-leave-active {
-        animation: bounce-in .5s reverse;
-      }
-      @keyframes bounce-in {
-        0% {
-          transform: scale(0);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
     </style>
   </head>
   <body>
     <h2 style="font-size: 20px;"
     >
-      Praticando JavaScript
+      Praticando JavaScript Com VUE.JS
     </h2>
-    <!-- <P id="pTeste"
-      style="font-size: 16px;"
-    >
-      O que acontece se você apertar o botão "<b>Aperte-me!</b>" ???
-    </P> -->
     <div id="meuvueapp">
       <table id="tabelaHistorico"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
-          <tr><th>HISTÓRICO DE CALCULO</th></tr>
+          <thead><tr><th>HISTÓRICO DE CALCULO</th></tr></thead>
           <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
           <!-- <tr
-          v-for="item in meuarray"
-          v-bind:operacaohistorico="item"
-          v-bind:key="item.id"
+            v-for="item in meuarray"
+            v-bind:operacaohistorico="item"
+            v-bind:key="item.id"
           >
             <td>
               {{item.texto}}
             </td>
           </tr> -->
           <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
-          <transition name="bounce-in">
-          <tr is="meu-componente"
+          <tr
+            is="meu-componente"
             v-for="item in meuarray"
             v-bind:operacaohistorico="item"
             v-bind:key="item.id"
           >
           </tr>
-          </transition>
           <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
           <!-- <template>
-            <component is="meu-componente"
+            <component
+              is="meu-componente"
               v-for="item in meuarray"
               v-bind:operacaohistorico="item"
               v-bind:key="item.id"
@@ -111,7 +89,7 @@
           </template> -->
           <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <nome-do-componente> -->
           <!-- <template>
-            <meu-componente 
+            <meu-componente
               v-for="item in meuarray"
               v-bind:operacaohistorico="item"
               v-bind:key="item.id"
@@ -120,63 +98,74 @@
           </template> -->
       </table>
       <div id="botoesTabela">
-        <!-- <button type="button" class="operacao"
-          style="background-color:rgb(170, 0, 170);"
-          onclick="document.getElementById('pTeste').innerHTML='<b>PARE DE SER CURIOSO E VÁ FAZER UMS CÁLCULOS!</b>'"
-        >
-          Aperte-me!
-        </button> -->
-        <button type="button" class="operacao"
+        <button 
+          type="button"
+          class="operacao"
           style="background-color:rgb(170, 0, 170);"
           v-on:click="limparHistorico"
-          onclick="contador = 0"
         >
           Limpar Histórico!
         </button>
       </div>
     </div>
     <div id="operacoes">
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         onclick="funcaoSoma();"
       >
         Faça uma soma!
       </button>
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         onclick="funcaoSubtracao();"
       >
         Faça uma subtração!
       </button>
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         onclick="funcaoMultiplicacao();"
       >
         Faça uma multiplicação!
       </button>
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         onclick="funcaoDivisao();"
       >
         Faça uma divisão!
       </button>
     </div>
     <div id="notificacoes">
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         style="background-color: rgb(102, 0, 197);"
         onclick="meNotificar('+');"
       >
         Notificar soma!
       </button>
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         style="background-color: rgb(102, 0, 197);"
         onclick="meNotificar('-');"
       >
         Notificar subtração!
       </button>
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         style="background-color: rgb(102, 0, 197);"
         onclick="meNotificar('*');"
       >
         Notificar multiplicação!
       </button>
-      <button type="button" class="operacao"
+      <button
+        type="button"
+        class="operacao"
         style="background-color: rgb(102, 0, 197);"
         onclick="meNotificar('/');"
       >
@@ -199,52 +188,48 @@
             // { id: 1, texto: 'texto1' },
             // { id: 2, texto: 'texto2' },
             // { id: 3, texto: 'texto3' }
-          ]
+          ],
+          meucontador: 0
         },
         methods: {
-          limparHistorico(){this.meuarray = [];}
+          limparHistorico(){
+            this.meuarray = [];
+            this.meucontador = 0;
+          },
+          adicionarHistorico(numero1, numero2, resultado, operacao){
+            this.meucontador++;
+            historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
+            this.meuarray.push({ "id":this.meucontador, "texto":historico });
+          }
         }
       });
-      contador = 0;
       function funcaoSoma(){
         n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         res = n1 + n2;
-        contador++;
-        funcaoHistorico(n1, n2, res, '+');
+        meuvueapp.adicionarHistorico(n1, n2, res, '+');
         alert('A soma dos números é = ' + res);
       }
       function funcaoSubtracao(){
         n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         res = n1 - n2;
-        contador++;
-        funcaoHistorico(n1, n2, res, '-');
+        meuvueapp.adicionarHistorico(n1, n2, res, '-');
         alert('A subtração dos números é = ' + res);
       }
       function funcaoMultiplicacao(){
         n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         res = n1 * n2;
-        contador++;
-        funcaoHistorico(n1, n2, res, 'x');
+        meuvueapp.adicionarHistorico(n1, n2, res, 'x');
         alert('A multiplicação dos números é = ' + res);
       }
       function funcaoDivisao(){
         n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
         res = n1 / n2;
-        contador++;
-        funcaoHistorico(n1, n2, res, '/');
+        meuvueapp.adicionarHistorico(n1, n2, res, '/');
         alert('A divisão dos números é = ' + res);
-      }
-      // function funcaoHistorico(numero1, numero2, resultado, operacao){
-      //   historico = '<tr><td>' + numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado + '</td></tr>';
-      //   document.getElementById('tabelaHistorico').innerHTML+=historico;
-      // }
-      function funcaoHistorico(numero1, numero2, resultado, operacao){
-        historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
-        meuvueapp._data.meuarray.push({ "id":contador, "texto":historico });
       }
       document.addEventListener('DOMContentLoaded', function () {
         if (!Notification) {
