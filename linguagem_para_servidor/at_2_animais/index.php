@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Qual é o Animal?</title>
+    <title>Qual é o Animal? (Com JavaScript)</title>
     <style>
       body {
         background-color: darkolivegreen;

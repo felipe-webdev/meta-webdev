@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Qual é o Animal - Apenas com PHP</title>
+    <title>Qual é o Animal? (Sem JavaScript)</title>
     <style>
       body {
         font-family: sans-serif;
