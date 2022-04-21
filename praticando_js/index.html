@@ -1,66 +1,32 @@
 <html>
   <head>
-    <title>Praticando JavaScript com VUE.JS</title>
+    <title>Praticando JavaScript com Vue.js</title>
     <meta charset="UTF-8">
+    <!-- MATERIALIZE 1.0.0 CSS COMPILADO E MINIFICADO -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- GOOGLE MATERIAL ICONES -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
-      h2, p {
-        width: 75%;
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
+      div {
         margin-top: 8px;
         margin-bottom: 8px;
-        font-family: sans-serif;
-        color: rgb(0, 0, 87);
       }
-      #botoesTabela, #operacoes, #notificacoes {
-        /* justify-content: center;
-        align-items: center; */
-        margin: auto;
-        width: 75%;
+      table.highlight>tbody>tr:hover {
+        background-color: #9fa8da !important;
+        transform: scaleY(1.1);
       }
-      .operacao {
-        display: inline-block;
-        margin-top: 8px;
-        margin-bottom: 8px;
-        background-color:rgb(51, 0, 172);
-        font-family: sans-serif;
-        font-size: 16px;
-        color: azure;
-        border-radius: 4px;
-      }
-      #tabelaHistorico {
-        margin: auto;
-        width: 75%;
-        padding-bottom: 8px;
-        font-family: monospace;
-        font-size: 16px;
-        color: rgb(0, 0, 87);
-      }
-      th, td {
-        border-color: rgb(35, 0, 160);
-        border-style: solid;
-        border-width: 2px;
-        border-radius: 4px;
-        padding: 4px;
-        transition: transform 500ms;
-      }
-      td:hover {
-        border-color: rgb(168, 0, 168);
-        transform: scale(1.1)
+      table.highlight>tbody>tr {
+        /* VOCÊ PODE IGNORAR O !important AQUI JÁ QUE O MATERIALIZE NÃO DEFINE UMA COR PADRÃO */
+        color: rgb(0, 0, 0) !important;
+        transition: transform 250ms;
       }
     </style>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   </head>
   <body>
-    <h2 style="font-size: 20px;"
-    >
-      Praticando JavaScript Com VUE.JS
-    </h2>
-    <div id="meuvueapp">
-      <table id="tabelaHistorico"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
-          <thead><tr><th>HISTÓRICO DE CALCULO</th></tr></thead>
+    <div id="meuvueapp" class="container">
+      <h4>Praticando JavaScript Com Vue.js</h4>
+      <table id="tabelaHistorico" class="striped highlight centered indigo lighten-4 z-depth-2"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
+          <thead><tr><th colspan="2">HISTÓRICO DE CALCULO</th></tr></thead>
           <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
           <!-- <tr
             v-for="item in meuarray"
@@ -73,10 +39,13 @@
           </tr> -->
           <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
           <tr
+            class="scale-transition"
             is="meu-componente"
-            v-for="item in meuarray"
-            v-bind:operacaohistorico="item"
-            v-bind:key="item.id"
+            v-for="(item, indice) in meuarray"
+            v-bind:itemhistorico="item"
+            v-bind:key="indice"
+            v-bind:indice="indice"
+            v-bind:deletar="deletar"
           >
           </tr>
           <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
@@ -102,88 +71,124 @@
       <div id="botoesTabela">
         <button 
           type="button"
-          class="operacao"
-          style="background-color:rgb(170, 0, 170);"
+          class="operacao btn waves-effect waves-light pink lighten-1"
           v-on:click="limparHistorico"
         >
-          Limpar Histórico!
+          <i class="small material-icons right">delete_sweep</i>
+          Limpar Histórico
+        </button>
+        <button 
+          type="button"
+          class="operacao btn waves-effect waves-light pink lighten-1"
+          v-on:click="operacoes"
+        >
+          <i class="small material-icons right">exposure</i>
+          Operações
+        </button>
+        <button 
+          type="button"
+          class="operacao btn waves-effect waves-light pink lighten-1"
+          v-on:click="notificacoes"
+        >
+          <i class="small material-icons right">add_alert</i>
+          Notificações
+        </button>
+      </div>
+      <div id="operacoes"
+        v-if="mostraroperacoes"
+      >
+        <button
+          type="button"
+          class="operacao btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('+');"
+        >
+          <i class="small material-icons right">add</i>
+          Somar
+        </button>
+        <button
+          type="button"
+          class="operacao btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('-');"
+        >
+          <i class="small material-icons right">remove</i>
+          Subtrair
+        </button>
+        <button
+          type="button"
+          class="operacao btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('*');"
+        >
+          <i class="small material-icons right">clear</i>
+          Multiplicar
+        </button>
+        <button
+          type="button"
+          class="operacao btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('/');"
+        >
+          <i class="small material-icons right">call_split</i>
+          Dividir
+        </button>
+      </div>
+      <div id="notificacoes"
+        v-if="mostrarnotificacoes"
+      >
+        <button
+          type="button"
+          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          v-on:click="notificar('+');"
+        >
+          <i class="small material-icons right">add</i>
+          Notificar soma
+        </button>
+        <button
+          type="button"
+          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          v-on:click="notificar('-');"
+        >
+          <i class="small material-icons right">remove</i>
+          Notificar subtração
+        </button>
+        <button
+          type="button"
+          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          v-on:click="notificar('*');"
+        >
+          <i class="small material-icons right">clear</i>
+          Notificar multiplicação
+        </button>
+        <button
+          type="button"
+          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          v-on:click="notificar('/');"
+        >
+          <i class="small material-icons right">call_split</i>
+          Notificar divisão
         </button>
       </div>
     </div>
-    <div id="operacoes">
-      <button
-        type="button"
-        class="operacao"
-        onclick="funcaoSoma();"
-      >
-        Faça uma soma!
-      </button>
-      <button
-        type="button"
-        class="operacao"
-        onclick="funcaoSubtracao();"
-      >
-        Faça uma subtração!
-      </button>
-      <button
-        type="button"
-        class="operacao"
-        onclick="funcaoMultiplicacao();"
-      >
-        Faça uma multiplicação!
-      </button>
-      <button
-        type="button"
-        class="operacao"
-        onclick="funcaoDivisao();"
-      >
-        Faça uma divisão!
-      </button>
-    </div>
-    <div id="notificacoes">
-      <button
-        type="button"
-        class="operacao"
-        style="background-color: rgb(102, 0, 197);"
-        onclick="meNotificar('+');"
-      >
-        Notificar soma!
-      </button>
-      <button
-        type="button"
-        class="operacao"
-        style="background-color: rgb(102, 0, 197);"
-        onclick="meNotificar('-');"
-      >
-        Notificar subtração!
-      </button>
-      <button
-        type="button"
-        class="operacao"
-        style="background-color: rgb(102, 0, 197);"
-        onclick="meNotificar('*');"
-      >
-        Notificar multiplicação!
-      </button>
-      <button
-        type="button"
-        class="operacao"
-        style="background-color: rgb(102, 0, 197);"
-        onclick="meNotificar('/');"
-      >
-        Notificar divisão!
-      </button>
-    </div>
-    <!-- Compiled and minified JavaScript -->
+    <!-- MATERIALIZE 1.0.0 JS COMPILADO E MINIFICADO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <!-- VUE.JS V2 DESENVOLVIMENTO -->
+    <!-- VUE.JS 2.6.14 DESENVOLVIMENTO -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <!-- VUE.JS V2 PRODUÇÃO -->
+    <!-- VUE.JS 2.6.14 PRODUÇÃO -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
     <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!Notification) {
+          alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.'); 
+          return;
+        }
+        if (Notification.permission !== "granted")
+          Notification.requestPermission();
+      });
       Vue.component('meu-componente', {
-          props: ['operacaohistorico'],
-          template: '<tr><td>{{ operacaohistorico.texto }}</td></tr>'
+          props: [
+            'itemhistorico',
+            'indice',
+            'deletar'
+          ],
+          template: '<tr><td style="width:80%">{{ itemhistorico.texto }}</td><td style="width:20%"><button type="button" class="btn waves-effect waves-light" v-on:click="deletar(indice)"><i class="small material-icons right" title="Deletar item">delete</i>Deletar item</button></td></tr>'
       });
       let meuvueapp = new Vue({
         el: '#meuvueapp',
@@ -193,99 +198,100 @@
             // { id: 2, texto: 'texto2' },
             // { id: 3, texto: 'texto3' }
           ],
-          meucontador: 0
+          mostraroperacoes: false,
+          mostrarnotificacoes: false
         },
         methods: {
-          limparHistorico(){
-            this.meuarray = [];
-            this.meucontador = 0;
+          calcular(operacao){
+            let n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+            let n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+            if (operacao == '+') {
+              let res = n1 + n2;
+              this.adicionarHistorico(n1, n2, res, '+');
+              alert('A soma dos números é = ' + res);
+            } else if (operacao == '-') {
+              let res = n1 - n2;
+              this.adicionarHistorico(n1, n2, res, '-');
+              alert('A subtração dos números é = ' + res);
+            } else if (operacao == '*') {
+              let res = n1 * n2;
+              this.adicionarHistorico(n1, n2, res, 'x');
+              alert('A multiplicação dos números é = ' + res);
+            } else {
+              let res = n1 / n2;
+              this.adicionarHistorico(n1, n2, res, '/');
+              alert('A divisão dos números é = ' + res);
+            }
+          },
+          notificar(operacao) {
+            if (Notification.permission !== "granted") {
+              Notification.requestPermission();
+            }
+            if (operacao == '+') {
+              var notification = new Notification('Notificação', {
+                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+                body: "Olá! Você realizará uma soma!",
+              });
+              notification.onclick = function () {
+                meuvueapp.calcular(operacao);
+                // window.open("COLOQUE UMA URL");
+              };
+            } else if (operacao == '-') {
+              var notification = new Notification('Notificação', {
+                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+                body: "Olá! Você realizará uma subtração!",
+              });
+              notification.onclick = function () {
+                meuvueapp.calcular(operacao);
+                // window.open("COLOQUE UMA URL");
+              };
+            } else if (operacao == '*') {
+              var notification = new Notification('Notificação', {
+                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+                body: "Olá! Você realizará uma multiplicação!",
+              });
+              notification.onclick = function () {
+                meuvueapp.calcular(operacao);
+                // window.open("COLOQUE UMA URL");
+              };
+            } else {
+              var notification = new Notification('Notificação', {
+                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
+                body: "Olá! Você realizará uma divisão!",
+              });
+              notification.onclick = function () {
+                meuvueapp.calcular(operacao);
+                // window.open("COLOQUE UMA URL");
+              };
+            }
           },
           adicionarHistorico(numero1, numero2, resultado, operacao){
-            this.meucontador++;
-            historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
-            this.meuarray.push({ "id":this.meucontador, "texto":historico });
+            let historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
+            this.meuarray.push({ "texto":historico });
+          },
+          limparHistorico(){
+            const itens = document.getElementsByClassName("scale-transition");
+            for (var i=0; i < itens.length; i++) {
+              itens[i].className = "scale-transition scale-out";
+            }
+            setTimeout(this.limparArray, 400);
+          },
+          deletar(indice) {
+            this.meuarray.splice(indice, 1);
+          },
+          limparArray(){
+            this.meuarray = [];
+          },
+          operacoes(){
+            this.mostrarnotificacoes = false;
+            this.mostraroperacoes = true;
+          },
+          notificacoes(){
+            this.mostraroperacoes = false;
+            this.mostrarnotificacoes = true;
           }
         }
       });
-      function funcaoSoma(){
-        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        res = n1 + n2;
-        meuvueapp.adicionarHistorico(n1, n2, res, '+');
-        alert('A soma dos números é = ' + res);
-      }
-      function funcaoSubtracao(){
-        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        res = n1 - n2;
-        meuvueapp.adicionarHistorico(n1, n2, res, '-');
-        alert('A subtração dos números é = ' + res);
-      }
-      function funcaoMultiplicacao(){
-        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        res = n1 * n2;
-        meuvueapp.adicionarHistorico(n1, n2, res, 'x');
-        alert('A multiplicação dos números é = ' + res);
-      }
-      function funcaoDivisao(){
-        n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-        res = n1 / n2;
-        meuvueapp.adicionarHistorico(n1, n2, res, '/');
-        alert('A divisão dos números é = ' + res);
-      }
-      document.addEventListener('DOMContentLoaded', function () {
-        if (!Notification) {
-          alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.'); 
-          return;
-        }
-        if (Notification.permission !== "granted")
-          Notification.requestPermission();
-      });
-      function meNotificar(operacao) {
-        if (Notification.permission !== "granted") {
-          Notification.requestPermission();
-        }
-        if (operacao == '+') {
-          var notification = new Notification('Notificação', {
-            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-            body: "Olá! Você realizará uma soma!",
-          });
-          notification.onclick = function () {
-            funcaoSoma();
-            // window.open("COLOQUE UMA URL");
-          };
-        } else if (operacao == '-') {
-          var notification = new Notification('Notificação', {
-            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-            body: "Olá! Você realizará uma subtração!",
-          });
-          notification.onclick = function () {
-            funcaoSubtracao();
-            // window.open("COLOQUE UMA URL");
-          };
-        } else if (operacao == '*') {
-          var notification = new Notification('Notificação', {
-            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-            body: "Olá! Você realizará uma multiplicação!",
-          });
-          notification.onclick = function () {
-            funcaoMultiplicacao();
-            // window.open("COLOQUE UMA URL");
-          };
-        }
-        else if (operacao == '/') {
-          var notification = new Notification('Notificação', {
-            // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-            body: "Olá! Você realizará uma divisão!",
-          });
-          notification.onclick = function () {
-            funcaoDivisao();
-            // window.open("COLOQUE UMA URL");
-          };
-        }
-      }
     </script>
   </body>
 </html>
