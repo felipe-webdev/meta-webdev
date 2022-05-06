@@ -7,164 +7,426 @@
     <!-- GOOGLE MATERIAL ICONES -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
-      div {
-        margin-top: 8px;
-        margin-bottom: 8px;
-      }
       table.highlight>tbody>tr:hover {
         background-color: #9fa8da !important;
-        transform: scaleY(1.1);
+        /* transform: scaleY(1.1); */
       }
       table.highlight>tbody>tr {
         /* VOCÊ PODE IGNORAR O !important AQUI JÁ QUE O MATERIALIZE NÃO DEFINE UMA COR PADRÃO */
         color: rgb(0, 0, 0) !important;
-        transition: transform 250ms;
+        /* transition: transform 250ms; */
+      }
+      div {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+      .container-vue {
+        width: 80%;
+        height: 90%;
+        margin: auto;
+        overflow-y: auto;
+      }
+      .container-historico {
+        height: 70%;
+        overflow-y: auto;
+        border-style: solid;
+        border-width: 2px;
+        border-color: #9fa8da;
+        background-color: #e8eaf6;
+      }
+      #visor, #botoes-classicos, .botao-classico {
+        padding: 8px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: #9fa8da;
+      }
+      #botoes-classicos {
+        display: grid;
+        grid-template-columns: auto auto auto auto auto auto;
+        gap: 4px;
+        background-color: #c5cae9;
+      }
+      .botao-classico {
+        font-size: 16px;
+        text-align: center;
       }
     </style>
   </head>
   <body>
-    <div id="meuvueapp" class="container">
-      <h4>Praticando JavaScript Com Vue.js</h4>
-      <table id="tabelaHistorico" class="striped highlight centered indigo lighten-4 z-depth-2"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
-          <thead><tr><th colspan="2">HISTÓRICO DE CALCULO</th></tr></thead>
-          <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
-          <!-- <tr
-            v-for="item in meuarray"
-            v-bind:operacaohistorico="item"
-            v-bind:key="item.id"
-          >
-            <td>
-              {{item.texto}}
-            </td>
-          </tr> -->
-          <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
-          <tr
-            class="scale-transition"
-            is="meu-componente"
-            v-for="(item, indice) in meuarray"
-            v-bind:itemhistorico="item"
-            v-bind:key="indice"
-            v-bind:indice="indice"
-            v-bind:deletar="deletar"
-          >
-          </tr>
-          <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
-          <!-- <template>
-            <component
-              is="meu-componente"
-              v-for="item in meuarray"
-              v-bind:operacaohistorico="item"
-              v-bind:key="item.id"
+    <div id="calcula-vue" class="container-vue">
+      <h4>Praticando JavaScript Com Vue.js: Calculadora Básica</h4>
+      <div id="historico" class="container-historico z-depth-2">
+        <table id="tabela-historico" class="striped highlight centered indigo lighten-4"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
+          <thead>
+            <tr><th colspan="2">HISTÓRICO DE CÁLCULO</th></tr>
+          </thead>
+          <tbody>
+            <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
+            <!-- <tr
+              class="scale-transition"
+              v-for="(item, indice) in arrayhistorico"
+              v-bind:key="indice"
             >
-            </component>
-          </template> -->
-          <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <nome-do-componente> -->
-          <!-- <template>
-            <meu-componente
-              v-for="item in meuarray"
-              v-bind:operacaohistorico="item"
-              v-bind:key="item.id"
+              <td>
+                {{ item.registro }}
+              </td>
+            </tr> -->
+            <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
+            <tr
+              class="scale-transition"
+              is="linha-historico"
+              v-for="(item, indice) in arrayhistorico"
+              v-bind:key="indice"
+              v-bind:itemhistorico="item"
+              v-bind:indice="indice"
+              v-bind:deletar="deletar"
             >
-            </meu-componente>
-          </template> -->
-      </table>
-      <div id="botoesTabela">
-        <button 
-          type="button"
-          class="operacao btn waves-effect waves-light pink lighten-1"
-          v-on:click="limparHistorico"
-        >
-          <i class="small material-icons right">delete_sweep</i>
-          Limpar Histórico
-        </button>
-        <button 
-          type="button"
-          class="operacao btn waves-effect waves-light pink lighten-1"
-          v-on:click="operacoes"
-        >
-          <i class="small material-icons right">exposure</i>
-          Operações
-        </button>
-        <button 
-          type="button"
-          class="operacao btn waves-effect waves-light pink lighten-1"
-          v-on:click="notificacoes"
-        >
-          <i class="small material-icons right">add_alert</i>
-          Notificações
-        </button>
+            </tr>
+            <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
+            <!-- <template>
+              <component
+                class="scale-transition"
+                is="linha-historico"
+                v-for="(item, indice) in arrayhistorico"
+                v-bind:key="indice"
+                v-bind:itemhistorico="item"
+                v-bind:indice="indice"
+                v-bind:deletar="deletar"
+              >
+              </component>
+            </template> -->
+            <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <nome-do-componente> -->
+            <!-- <template>
+              <linha-historico
+                class="scale-transition"
+                v-for="(item, indice) in arrayhistorico"
+                v-bind:key="indice"
+                v-bind:itemhistorico="item"
+                v-bind:indice="indice"
+                v-bind:deletar="deletar"
+              >
+              </linha-historico>
+            </template> -->
+          </tbody>
+        </table>
       </div>
-      <div id="operacoes"
-        v-if="mostraroperacoes"
+      <div id="botoes-tabela">
+        <div id="funcoes-1">
+          <button 
+            type="button"
+            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
+            v-on:click="limparHistorico"
+          >
+            <i class="small material-icons right">delete_sweep</i>
+            Limpar Histórico
+          </button>
+          <button 
+            type="button"
+            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
+            v-on:click="abrirModal"
+          >
+            <i class="small material-icons right">exposure</i>
+            Operações Com Modal
+          </button>
+        </div>
+        <div id="funcoes-2">
+          <button 
+            type="button"
+            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
+            v-bind:class="{'darken-2': mostraralert}"
+            v-on:click="verAlert"
+          >
+            <i class="small material-icons right">exposure</i>
+            Operações Com Alert
+          </button>
+          <button 
+            type="button"
+            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
+            v-bind:class="{'darken-2': mostrarnotificacao}"
+            v-on:click="verNotificacoes"
+          >
+            <i class="small material-icons right">add_alert</i>
+            Operações Com Notificação
+          </button>
+        </div>
+      </div>
+      <div id="botoes-alert"
+        v-if="mostraralert"
       >
         <button
           type="button"
-          class="operacao btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('+');"
+          class="operacao-alert btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('+', 'alert');"
         >
           <i class="small material-icons right">add</i>
-          Somar
+          Soma
         </button>
         <button
           type="button"
-          class="operacao btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('-');"
+          class="operacao-alert btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('-', 'alert');"
         >
           <i class="small material-icons right">remove</i>
-          Subtrair
+          Subtração
         </button>
         <button
           type="button"
-          class="operacao btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('*');"
+          class="operacao-alert btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('*', 'alert');"
         >
           <i class="small material-icons right">clear</i>
-          Multiplicar
+          Multiplicação
         </button>
         <button
           type="button"
-          class="operacao btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('/');"
+          class="operacao-alert btn waves-effect waves-light blue darken-1"
+          v-on:click="calcular('/', 'alert');"
         >
           <i class="small material-icons right">call_split</i>
-          Dividir
+          Divisão
         </button>
       </div>
-      <div id="notificacoes"
-        v-if="mostrarnotificacoes"
+      <div id="botoes-notificacao"
+        v-if="mostrarnotificacao"
       >
         <button
           type="button"
-          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
           v-on:click="notificar('+');"
         >
           <i class="small material-icons right">add</i>
-          Notificar soma
+          Soma
         </button>
         <button
           type="button"
-          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
           v-on:click="notificar('-');"
         >
           <i class="small material-icons right">remove</i>
-          Notificar subtração
+          Subtração
         </button>
         <button
           type="button"
-          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
           v-on:click="notificar('*');"
         >
           <i class="small material-icons right">clear</i>
-          Notificar multiplicação
+          Multiplicação
         </button>
         <button
           type="button"
-          class="notificacao btn waves-effect waves-light deep-purple lighten-1"
+          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
           v-on:click="notificar('/');"
         >
           <i class="small material-icons right">call_split</i>
-          Notificar divisão
+          Divisão
         </button>
+      </div>
+      <div id="modal-operacoes" ref="modalOperacoes" class="modal">
+        <div class="modal-content">
+          <div id="visor" class="indigo lighten-4 right-align">
+            <h5>{{ resultado }}</h5>
+          </div>
+          <div id="controle-basico"
+            class="center-align"
+            v-if="modo == 'basico'"
+          >
+            <input v-model="numero1" placeholder="Digite um Número">
+            <input v-model="numero2" placeholder="Digite um Número">
+            <button
+              type="button"
+              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
+              v-on:click="calcular('+', 'modal');"
+            >
+              <i class="large material-icons right">add</i>
+              Soma
+            </button>
+            <button
+              type="button"
+              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
+              v-on:click="calcular('-', 'modal');"
+            >
+              <i class="large material-icons right">remove</i>
+              Subtração
+            </button>
+            <button
+              type="button"
+              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
+              v-on:click="calcular('*', 'modal');"
+            >
+              <i class="large material-icons right">clear</i>
+              Multiplicação
+            </button>
+            <button
+              type="button"
+              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
+              v-on:click="calcular('/', 'modal');"
+            >
+              <i class="large material-icons right">call_split</i>
+              Divisão
+            </button>
+          </div>
+          <div id="controle-classico"
+            v-if="modo == 'classico'"
+          >
+            <div id="expressao">
+              <input v-model="expressao" placeholder="Digite uma Expressão" v-on:keyup.enter="calcular('expressao');">
+            </div>
+            <div id="botoes-classicos">
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('1');"
+              >
+                1
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('2');"
+              >
+                2
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('3');"
+              >
+                3
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('4');"
+              >
+                4
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('5');"
+              >
+                5
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('6');"
+              >
+                6
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('7');"
+              >
+                7
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('8');"
+              >
+                8
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('9');"
+              >
+                9
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('0');"
+              >
+                0
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('(');"
+              >
+                (
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao(')');"
+              >
+                )
+              </div>
+              <div
+                style="grid-column-start: 1; grid-column-end: 3;"
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('.');"
+              >
+                .
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao(' + ');"
+              >
+                +
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao(' - ');"
+              >
+                -
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao(' * ');"
+              >
+                *
+              </div>
+              <div
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao(' / ');"
+              >
+                /
+              </div>
+              <div
+                style="grid-column-start: 1; grid-column-end: 3;"
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('apaga');"
+              >
+                ←
+              </div>
+              <div
+                style="grid-column-start: 3; grid-column-end: 5;"
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="construirExpressao('');"
+              >
+                C
+              </div>
+              <div
+                style="grid-column-start: 5; grid-column-end: 7;"
+                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                v-on:click="calcular('expressao');"
+              >
+                =
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button 
+            style="float: left; margin-right: 8px;"
+            type="button"
+            class="waves-effect waves-light btn-small pink lighten-1"
+            v-bind:class="{'darken-2': modo == 'classico'}"
+            @click="verModo('classico')"
+          >
+            Modo Clássico
+          </button>
+          <button 
+            style="float: left; margin-right: 8px;"
+            type="button"
+            class="waves-effect waves-light btn-small pink lighten-1"
+            v-bind:class="{'darken-2': modo == 'basico'}"
+            @click="verModo('basico')"
+          >
+            Modo Básico
+          </button>
+          <button 
+            type="button"
+            class="waves-effect waves-light btn-small"
+            @click="resetModal"
+          >
+            Fechar
+          </button>
+        </div>
       </div>
     </div>
     <!-- MATERIALIZE 1.0.0 JS COMPILADO E MINIFICADO -->
@@ -174,53 +436,86 @@
     <!-- VUE.JS 2.6.14 PRODUÇÃO -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        if (!Notification) {
-          alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.'); 
-          return;
-        }
-        if (Notification.permission !== "granted")
-          Notification.requestPermission();
-      });
-      Vue.component('meu-componente', {
+      Vue.component('linha-historico', {
           props: [
             'itemhistorico',
             'indice',
             'deletar'
           ],
-          template: '<tr><td style="width:80%">{{ itemhistorico.texto }}</td><td style="width:20%"><button type="button" class="btn waves-effect waves-light" v-on:click="deletar(indice)"><i class="small material-icons right" title="Deletar item">delete</i>Deletar item</button></td></tr>'
+          template:  `<tr>
+                        <td
+                          style="width:80%"
+                        >
+                          {{ itemhistorico.registro }}
+                        </td>
+                        <td
+                          style="width:20%"
+                        >
+                          <button
+                            type="button"
+                            class="btn waves-effect waves-light"
+                            v-on:click="deletar(indice)"
+                          >
+                            <i class="small material-icons" title="Deletar Registro">delete</i>
+                          </button>
+                        </td>
+                      </tr>`
       });
-      let meuvueapp = new Vue({
-        el: '#meuvueapp',
+      let CalculaVue = new Vue({
+        el: '#calcula-vue',
         data: {
-          meuarray: [
-            // { id: 1, texto: 'texto1' },
-            // { id: 2, texto: 'texto2' },
-            // { id: 3, texto: 'texto3' }
-          ],
-          mostraroperacoes: false,
-          mostrarnotificacoes: false
+          arrayhistorico: [],
+          mostraralert: false,
+          mostrarnotificacao: false,
+          modo: 'basico',
+          expressao: '',
+          numero1: null,
+          numero2: null,
+          resultado: '_'
+        },
+        created() {
+          document.addEventListener('DOMContentLoaded', function () {
+            if (!Notification) {
+              alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.');
+              return;
+            }
+            if (Notification.permission !== "granted")
+              Notification.requestPermission();
+            M.Modal.init(this.querySelectorAll(".modal"));
+          });
         },
         methods: {
-          calcular(operacao){
-            let n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-            let n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+          calcular(operacao, origem) {
+            let n1 = null;
+            let n2 = null;
+            if (origem == 'alert') {
+              n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+              n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+            } else if (origem == 'modal') {
+              n1 = Number(this.numero1);
+              n2 = Number(this.numero2);
+            }
             if (operacao == '+') {
               let res = n1 + n2;
-              this.adicionarHistorico(n1, n2, res, '+');
-              alert('A soma dos números é = ' + res);
+              origem == 'modal' ? this.resultado = res : alert('A soma dos números é = ' + res);
+              this.adicionarHistorico('', n1, n2, res, operacao);
             } else if (operacao == '-') {
               let res = n1 - n2;
-              this.adicionarHistorico(n1, n2, res, '-');
-              alert('A subtração dos números é = ' + res);
+              origem == 'modal' ? this.resultado = res : alert('A subtração dos números é = ' + res);
+              this.adicionarHistorico('', n1, n2, res, operacao);
             } else if (operacao == '*') {
               let res = n1 * n2;
-              this.adicionarHistorico(n1, n2, res, 'x');
-              alert('A multiplicação dos números é = ' + res);
-            } else {
+              origem == 'modal' ? this.resultado = res : alert('A multiplicação dos números é = ' + res);
+              this.adicionarHistorico('', n1, n2, res, operacao);
+            } else if (operacao == "/") {
               let res = n1 / n2;
-              this.adicionarHistorico(n1, n2, res, '/');
-              alert('A divisão dos números é = ' + res);
+              origem == 'modal' ? this.resultado = res : alert('A divisão dos números é = ' + res);
+              this.adicionarHistorico('', n1, n2, res, operacao);
+            } else if (operacao == 'expressao' && this.expressao != '') {
+              let exp = this.expressao
+              let res = eval(exp);
+              this.resultado = res;
+              this.adicionarHistorico(exp, '', '', res, '');
             }
           },
           notificar(operacao) {
@@ -233,7 +528,7 @@
                 body: "Olá! Você realizará uma soma!",
               });
               notification.onclick = function () {
-                meuvueapp.calcular(operacao);
+                CalculaVue.calcular(operacao, 'alert');
                 // window.open("COLOQUE UMA URL");
               };
             } else if (operacao == '-') {
@@ -242,7 +537,7 @@
                 body: "Olá! Você realizará uma subtração!",
               });
               notification.onclick = function () {
-                meuvueapp.calcular(operacao);
+                CalculaVue.calcular(operacao, 'alert');
                 // window.open("COLOQUE UMA URL");
               };
             } else if (operacao == '*') {
@@ -251,7 +546,7 @@
                 body: "Olá! Você realizará uma multiplicação!",
               });
               notification.onclick = function () {
-                meuvueapp.calcular(operacao);
+                CalculaVue.calcular(operacao, 'alert');
                 // window.open("COLOQUE UMA URL");
               };
             } else {
@@ -260,16 +555,21 @@
                 body: "Olá! Você realizará uma divisão!",
               });
               notification.onclick = function () {
-                meuvueapp.calcular(operacao);
+                CalculaVue.calcular(operacao, 'alert');
                 // window.open("COLOQUE UMA URL");
               };
             }
           },
-          adicionarHistorico(numero1, numero2, resultado, operacao){
-            let historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
-            this.meuarray.push({ "texto":historico });
+          adicionarHistorico(expressao, numero1, numero2, resultado, operacao) {
+            let historico = '';
+            if (expressao != '') {
+              historico = expressao + ' = ' + resultado;
+            } else {
+              historico = numero1 + ' ' + operacao + ' ' + numero2 + ' = ' + resultado;
+            }
+            this.arrayhistorico.push({ "registro":historico });
           },
-          limparHistorico(){
+          limparHistorico() {
             const itens = document.getElementsByClassName("scale-transition");
             for (var i=0; i < itens.length; i++) {
               itens[i].className = "scale-transition scale-out";
@@ -277,18 +577,53 @@
             setTimeout(this.limparArray, 400);
           },
           deletar(indice) {
-            this.meuarray.splice(indice, 1);
+            this.arrayhistorico.splice(indice, 1);
           },
-          limparArray(){
-            this.meuarray = [];
+          limparArray() {
+            this.arrayhistorico = [];
           },
-          operacoes(){
-            this.mostrarnotificacoes = false;
-            this.mostraroperacoes = true;
+          verAlert() {
+            if (this.mostraralert) {
+              this.mostraralert = false;
+            } else {
+              this.mostrarnotificacao = false;
+              this.mostraralert = true;
+            }
           },
-          notificacoes(){
-            this.mostraroperacoes = false;
-            this.mostrarnotificacoes = true;
+          verNotificacoes() {
+            if (this.mostrarnotificacao) {
+              this.mostrarnotificacao = false;
+            } else {
+              this.mostraralert = false;
+              this.mostrarnotificacao = true;
+            }
+          },
+          verModo(modo) {
+            if (modo == 'classico') {
+              this.modo = 'classico';
+            } else if (modo == 'basico') {
+              this.modo = 'basico';
+            }
+          },
+          abrirModal() {
+            M.Modal.getInstance(this.$refs.modalOperacoes).open();
+          },
+          resetModal() {
+            this.modo = 'basico'
+            this.expressao = '';
+            this.numero1 = null;
+            this.numero2 = null;
+            this.resultado = '_';
+            M.Modal.getInstance(this.$refs.modalOperacoes).close();
+          },
+          construirExpressao(caractere) {
+            if (caractere == '') {
+              this.expressao = '';
+            } else if (caractere == 'apaga') {
+              this.expressao = this.expressao.slice(0, -1)
+            } else {
+              this.expressao += caractere;
+            }
           }
         }
       });
