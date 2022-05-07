@@ -22,12 +22,12 @@
       }
       .container-vue {
         width: 80%;
-        height: 90%;
+        height: 96%;
         margin: auto;
         overflow-y: auto;
       }
       .container-historico {
-        height: 70%;
+        height: 72%;
         overflow-y: auto;
         border-style: solid;
         border-width: 2px;
@@ -402,8 +402,8 @@
         </div>
         <div class="modal-footer">
           <button 
-            style="float: left; margin-right: 8px;"
             type="button"
+            style="float: left; margin-right: 8px;"
             class="waves-effect waves-light btn-small pink lighten-1"
             v-bind:class="{'darken-2': modo == 'classico'}"
             @click="verModo('classico')"
@@ -411,8 +411,8 @@
             Modo Clássico
           </button>
           <button 
-            style="float: left; margin-right: 8px;"
             type="button"
+            style="float: left; margin-right: 8px;"
             class="waves-effect waves-light btn-small pink lighten-1"
             v-bind:class="{'darken-2': modo == 'basico'}"
             @click="verModo('basico')"
@@ -453,10 +453,11 @@
                         >
                           <button
                             type="button"
-                            class="btn waves-effect waves-light"
+                            class="btn tooltipped waves-effect waves-light red darken-2"
+                            data-position="left" data-tooltip="Deletar Registro"
                             v-on:click="deletar(indice)"
                           >
-                            <i class="small material-icons" title="Deletar Registro">delete</i>
+                            <i class="small material-icons">delete</i>
                           </button>
                         </td>
                       </tr>`
@@ -469,8 +470,8 @@
           mostrarnotificacao: false,
           modo: 'basico',
           expressao: '',
-          numero1: null,
-          numero2: null,
+          numero1: '',
+          numero2: '',
           resultado: '_'
         },
         created() {
@@ -481,41 +482,73 @@
             }
             if (Notification.permission !== "granted")
               Notification.requestPermission();
-            M.Modal.init(this.querySelectorAll(".modal"));
+            M.Modal.init(this.querySelectorAll(".modal")); // AQUI this = document
           });
+        },
+        updated() {
+          M.Tooltip.init(document.querySelectorAll(".tooltipped"));
         },
         methods: {
           calcular(operacao, origem) {
+            let exp = this.expressao;
             let n1 = null;
             let n2 = null;
+            let res = null;
             if (origem == 'alert') {
               n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
               n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
             } else if (origem == 'modal') {
-              n1 = Number(this.numero1);
-              n2 = Number(this.numero2);
+              n1 = Number(this.numero1.replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+              n2 = Number(this.numero2.replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+            }
+            if (n1 == '' || n1 == null || n1 == undefined) {
+              n1 = NaN;
+            }
+            if (n2 == '' || n2 == null || n2 == undefined) {
+              n2 = NaN;
             }
             if (operacao == '+') {
-              let res = n1 + n2;
+              res = n1 + n2;
+              if (isNaN(res)) {
+                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+                return;
+              }
               origem == 'modal' ? this.resultado = res : alert('A soma dos números é = ' + res);
               this.adicionarHistorico('', n1, n2, res, operacao);
             } else if (operacao == '-') {
-              let res = n1 - n2;
+              res = n1 - n2;
+              if (isNaN(res)) {
+                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+                return;
+              }
               origem == 'modal' ? this.resultado = res : alert('A subtração dos números é = ' + res);
               this.adicionarHistorico('', n1, n2, res, operacao);
             } else if (operacao == '*') {
-              let res = n1 * n2;
+              res = n1 * n2;
+              if (isNaN(res)) {
+                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+                return;
+              }
               origem == 'modal' ? this.resultado = res : alert('A multiplicação dos números é = ' + res);
               this.adicionarHistorico('', n1, n2, res, operacao);
             } else if (operacao == "/") {
-              let res = n1 / n2;
+              res = n1 / n2;
+              if (isNaN(res)) {
+                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+                return;
+              }
               origem == 'modal' ? this.resultado = res : alert('A divisão dos números é = ' + res);
               this.adicionarHistorico('', n1, n2, res, operacao);
             } else if (operacao == 'expressao' && this.expressao != '') {
-              let exp = this.expressao
-              let res = eval(exp);
-              this.resultado = res;
-              this.adicionarHistorico(exp, '', '', res, '');
+              try {
+                res = eval(exp);
+                this.resultado = res;
+                this.adicionarHistorico(exp, '', '', res, '');
+              } catch (erro) {
+                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+              }
+            } else if (this.expressao == '') {
+              M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
             }
           },
           notificar(operacao) {
@@ -578,6 +611,7 @@
           },
           deletar(indice) {
             this.arrayhistorico.splice(indice, 1);
+            M.toast({html: 'Registro Deletado!', classes: 'white-text blue darken-2 z-depth-2'});
           },
           limparArray() {
             this.arrayhistorico = [];
@@ -611,8 +645,8 @@
           resetModal() {
             this.modo = 'basico'
             this.expressao = '';
-            this.numero1 = null;
-            this.numero2 = null;
+            this.numero1 = '';
+            this.numero2 = '';
             this.resultado = '_';
             M.Modal.getInstance(this.$refs.modalOperacoes).close();
           },
