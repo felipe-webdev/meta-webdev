@@ -1,42 +1,6 @@
 <?php
-/* EXECUTAR OPERAÇÃO APÓS CONFIRMAÇÃO */
-if(isset($_POST["id"]) && !empty($_POST["id"])){
   /* INCLUIR ARQUIVO DE CONFIGURAÇÃO */
-  require_once "Conexao.php";
-  
-  /* PREPARAR COMANDO DELETE */
-  $sql = "DELETE FROM funcionarios WHERE id = ?";
-  
-  if($stmt = $mysqli->prepare($sql)){
-    /* VINCULAR VARIÁVEIS AO COMANDO COMO PARÂMETROS */
-    $stmt->bind_param("i", $param_id);
-    
-    /* DEFINIR PARÂMETROS */
-    $param_id = trim($_POST["id"]);
-    
-    /* EXECUTAR COMANDO DELETE */
-    if($stmt->execute()){
-      /* REGISTRO DELETADO COM SUCESSO. RETORNAR PARA A PÁGINA INICIAL */
-      header("location: index.php");
-      exit();
-    } else{
-      echo "Oops! Algo deu errado. Por favor tente novamente mais tarde.";
-    }
-  }
-  
-  /* FECHAR COMANDO */
-  $stmt->close();
-  
-  /* FECHAR CONEXÃO */
-  $mysqli->close();
-} else{
-  /* CHECAR EXISTÊNCIA DO PARÂMETRO ID */
-  if(empty(trim($_GET["id"]))){
-    /* URL NÃO CONTÉM O PARÂMETRO ID. REDIRECIONAR PARA A PÁGINA DE ERRO */
-    header("location: error.php");
-    exit();
-  }
-}
+  require_once "../core/Deletar.php";
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +18,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 </head>
 <body>
   <div class="wrapper">
-    <img class="img-fluid" src="../../public/img/crud1.png">
+    <img class="img-fluid" src="../public/img/crud1.png">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
@@ -65,7 +29,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
               <p>Tem certeza de que deseja deletar este funcionário?</p>
               <p>
                 <input type="submit" value="Sim" class="btn btn-danger">
-                <a href="index.php" class="btn btn-secondary ml-2">Não</a>
+                <a href="../index.php" class="btn btn-secondary ml-2">Não</a>
               </p>
             </div>
           </form>

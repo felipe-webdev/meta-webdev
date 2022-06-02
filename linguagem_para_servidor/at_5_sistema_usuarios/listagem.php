@@ -7,6 +7,16 @@
   <title>Listar</title>
 </head>
 <body>
-  
+  <h5>Deletar Usuário</h5>
+  <form action="./deletar.php" method="GET">
+    <input 
+      type="text"
+      name="email"
+      placeholder="Digite o email do usuário"
+      autofocus
+      required
+    />
+    <input type="submit" name="btn-deletar" value="Deletar"/>
+  </form>
 </body>
 </html>

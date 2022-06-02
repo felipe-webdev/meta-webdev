@@ -13,12 +13,12 @@
 </head>
 <body>
   <div class="wrapper">
-    <img class="img-fluid" src="../../public/img/crud1.png">
+    <img class="img-fluid" src="../public/img/crud1.png">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
           <h2 class="mt-5 mb-3">Requisição inválida</h2>
-          <div class="alert alert-danger">Desculpe, você realizou uma requisição inválida. Por favor <a href="index.php" class="alert-link">retorne</a> e tente novamente.</div>
+          <div class="alert alert-danger">Desculpe, você realizou uma requisição inválida. Por favor <a href="../index.php" class="alert-link">retorne</a> e tente novamente.</div>
         </div>
       </div>
     </div>
