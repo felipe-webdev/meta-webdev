@@ -1,9 +1,9 @@
-<?php require_once "core/Entrar.php"; ?>
+<?php require_once "../core/Cadastrar.php"; ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <title>Entrar</title>
+  <title>Cadastrar Usuário</title>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,40 +23,65 @@
   </style>
 </head>
 <body>
+<?php 
+    $locais = [
+      "Painel" => "Painel.php",
+      "Perfil" => "#",
+      "Atualizar_Cadastro" => "#",
+      "Alterar_Senha" => "#",
+      "Sair" => "../core/Sair.php"
+    ];
+    if (isset($_SESSION["autenticado"]) && $_SESSION["autenticado"] === true) {
+      require_once "../layout/nav_topo.php";
+    }
+  ?>
   <div class="wrapper">
     <div class="mt-5 mb-3 clearfix" id="form">
-        <h2>Entrar</h2>
-        <?php
-          if (!empty($login_erro)) {
-            echo(
-              '<div class="alert alert-danger">'.$login_erro.'</div>'
-            );
-          }
-        ?>
+      <h2>Cadastrar Usuário</h2>
+      <p>Preencha este formulário para cadastrar o usuário.</p>
       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input 
+            class="form-control <?php if (!empty($nome_erro)) {echo('is-invalid');} ?>"
+            name="nome"
+            type="text"
+            value="<?php echo($nome); ?>"
+          >
+          <span class="invalid-feedback"><?php echo($nome_erro); ?></span>
+        </div>
         <div class="form-group">
           <label for="email">Email</label>
           <input 
             class="form-control <?php if (!empty($email_erro)) {echo('is-invalid');} ?>"
             name="email"
             type="email"
-            value="<?php if (!empty($email)) {echo($email);} ?>"
-          />
+            value="<?php echo($email); ?>"
+          >
           <span class="invalid-feedback"><?php echo($email_erro); ?></span>
         </div>
-        <div class="form-group mb-3">
+        <div class="form-group">
           <label for="senha">Senha</label>
-          <input
+          <input 
             class="form-control <?php if (!empty($senha_erro)) {echo('is-invalid');} ?>"
             name="senha"
             type="password"
-            value="<?php if (!empty($senha)) {echo($senha);} ?>"
-          />
+            value="<?php echo($senha); ?>"
+          >
           <span class="invalid-feedback"><?php echo($senha_erro); ?></span>
         </div>
+        <div class="form-group mb-3">
+          <label for="senha">Confirma senha</label>
+          <input 
+            class="form-control <?php if (!empty($confirma_senha_erro)) {echo('is-invalid');} ?>"
+            name="confirma_senha"
+            type="password"
+            value="<?php echo($confirma_senha); ?>"
+          >
+          <span class="invalid-feedback"><?php echo($confirma_senha_erro); ?></span>
+        </div>
         <div class="form-group">
-          <input class="btn btn-primary" name="btn_entrar" type="submit" value="Entrar"/>
-          <a class="btn btn-secondary" href="view/Cadastrar.php">Cadastrar Novo Usuário</a>
+          <input class="btn btn-primary" name="btn_cadastrar" type="submit" value="Cadastrar">
         </div>
       </form>
     </div>

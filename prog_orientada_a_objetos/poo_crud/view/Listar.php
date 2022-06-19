@@ -1,12 +1,9 @@
-<?php 
-  require_once "../core/Sessao.php";
-  require_once "../core/Deletar.php";
-?>
+<?php require_once "../core/Sessao.php"; ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <title>Deletar Funcionário</title>
+  <title>Listar Funcionários</title>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +17,15 @@
       width: 600px;
       margin: 0 auto;
     }
+    table tr td:last-child{
+      width: 120px;
+    }
   </style>
+  <script>
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();   
+    });
+  </script>
 </head>
 <body>
   <?php 
@@ -37,19 +42,12 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
-          <h2 class="mt-5 mb-3">Deletar Funcionário</h2>
-          <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="alert alert-danger">
-              <input type="hidden" name="id" value="<?php echo trim($_GET["id"]); ?>"/>
-              <p>Tem certeza de que deseja deletar este funcionário?</p>
-              <p>
-                <input type="submit" name="btn_deletar" value="Sim" class="btn btn-danger">
-                <a href="Listar.php" class="btn btn-secondary ml-2">Não</a>
-              </p>
-            </div>
-          </form>
+          <div class="mt-5 mb-3 clearfix">
+            <h2 class="pull-left">Listar Funcionários</h2>
+          </div>
+          <?php require_once "../core/Listar.php" ?>
         </div>
-      </div>
+      </div>    
     </div>
   </div>
 </body>

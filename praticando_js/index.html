@@ -2,6 +2,7 @@
   <head>
     <title>Praticando JavaScript com Vue.js</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- MATERIALIZE 1.0.0 CSS COMPILADO E MINIFICADO -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- GOOGLE MATERIAL ICONES -->
@@ -11,388 +12,409 @@
         background-color: #9fa8da !important;
         /* transform: scaleY(1.1); */
       }
+
       table.highlight>tbody>tr {
         /* VOCÊ PODE IGNORAR O !important AQUI JÁ QUE O MATERIALIZE NÃO DEFINE UMA COR PADRÃO */
         color: rgb(0, 0, 0) !important;
         /* transition: transform 250ms; */
       }
-      div {
-        margin-top: 8px;
-        margin-bottom: 8px;
+
+      ::placeholder {
+        color: #606060;
       }
-      .container-vue {
-        width: 80%;
-        height: 96%;
-        margin: auto;
-        overflow-y: auto;
+
+      #visor {
+        font-size: 30px;
       }
-      .container-historico {
-        height: 72%;
-        overflow-y: auto;
+
+      #modo-classico #botoes-classico div {
+        height: 45px;
         border-style: solid;
         border-width: 2px;
-        border-color: #9fa8da;
-        background-color: #e8eaf6;
+        border-color: #c5cae9;
+        font-weight: bold;
+        font-size: 20px;
       }
-      #visor, #botoes-classicos, .botao-classico {
+
+      #modo-classico, #modo-basico, #historico {
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+
+      #painel-funcoes {
         padding: 8px;
-        border-style: solid;
-        border-width: 2px;
-        border-color: #9fa8da;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
-      #botoes-classicos {
-        display: grid;
-        grid-template-columns: auto auto auto auto auto auto;
-        gap: 4px;
-        background-color: #c5cae9;
+
+      .no-margin-bottom {
+        margin-bottom:0px !important
       }
-      .botao-classico {
-        font-size: 16px;
-        text-align: center;
+
+      .no-padding {
+        padding:0px !important
       }
     </style>
   </head>
   <body>
-    <div id="calcula-vue" class="container-vue">
-      <h4>Praticando JavaScript Com Vue.js: Calculadora Básica</h4>
-      <div id="historico" class="container-historico z-depth-2">
-        <table id="tabela-historico" class="striped highlight centered indigo lighten-4"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
-          <thead>
-            <tr><th colspan="2">HISTÓRICO DE CÁLCULO</th></tr>
-          </thead>
-          <tbody>
-            <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
-            <!-- <tr
-              class="scale-transition"
-              v-for="(item, indice) in arrayhistorico"
-              v-bind:key="indice"
+    <div id="calcula-vue" class="container">
+      <div class="row">
+        <h5 class="center-align">Praticando JavaScript Com Vue.js</h5>
+        <div id="calculadora"
+          class="col l6 s12"
+        >
+          <div id="abas"
+            class="row no-margin-bottom"
+          >
+            <div 
+              class="col s6 white-text waves-effect waves-light center-align"
+              :class="{ 'darken-2': modo == 'basico',
+                        'teal': cor == 'teal',
+                        'blue': cor == 'blue',
+                        'deep-purple': cor == 'deep-purple',
+                        'red': cor == 'red',
+                        'pink': cor == 'pink'
+                      }"
+              @click="verModo('basico')"
             >
-              <td>
-                {{ item.registro }}
-              </td>
-            </tr> -->
-            <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
-            <tr
-              class="scale-transition"
-              is="linha-historico"
-              v-for="(item, indice) in arrayhistorico"
-              v-bind:key="indice"
-              v-bind:itemhistorico="item"
-              v-bind:indice="indice"
-              v-bind:deletar="deletar"
+              MODO BÁSICO
+            </div>
+            <div 
+              class="col s6 white-text waves-effect waves-light center-align"
+              :class="{ 'darken-2': modo == 'classico',
+                        'teal': cor == 'teal',
+                        'blue': cor == 'blue',
+                        'deep-purple': cor == 'deep-purple',
+                        'red': cor == 'red',
+                        'pink': cor == 'pink'
+                      }"
+              @click="verModo('classico')"
             >
-            </tr>
-            <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
-            <!-- <template>
-              <component
-                class="scale-transition"
-                is="linha-historico"
-                v-for="(item, indice) in arrayhistorico"
-                v-bind:key="indice"
-                v-bind:itemhistorico="item"
-                v-bind:indice="indice"
-                v-bind:deletar="deletar"
-              >
-              </component>
-            </template> -->
-            <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <nome-do-componente> -->
-            <!-- <template>
-              <linha-historico
-                class="scale-transition"
-                v-for="(item, indice) in arrayhistorico"
-                v-bind:key="indice"
-                v-bind:itemhistorico="item"
-                v-bind:indice="indice"
-                v-bind:deletar="deletar"
-              >
-              </linha-historico>
-            </template> -->
-          </tbody>
-        </table>
-      </div>
-      <div id="botoes-tabela">
-        <div id="funcoes-1">
-          <button 
-            type="button"
-            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
-            v-on:click="limparHistorico"
-          >
-            <i class="small material-icons right">delete_sweep</i>
-            Limpar Histórico
-          </button>
-          <button 
-            type="button"
-            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
-            v-on:click="abrirModal"
-          >
-            <i class="small material-icons right">exposure</i>
-            Operações Com Modal
-          </button>
-        </div>
-        <div id="funcoes-2">
-          <button 
-            type="button"
-            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
-            v-bind:class="{'darken-2': mostraralert}"
-            v-on:click="verAlert"
-          >
-            <i class="small material-icons right">exposure</i>
-            Operações Com Alert
-          </button>
-          <button 
-            type="button"
-            class="operacao-tabela btn waves-effect waves-light pink lighten-1"
-            v-bind:class="{'darken-2': mostrarnotificacao}"
-            v-on:click="verNotificacoes"
-          >
-            <i class="small material-icons right">add_alert</i>
-            Operações Com Notificação
-          </button>
-        </div>
-      </div>
-      <div id="botoes-alert"
-        v-if="mostraralert"
-      >
-        <button
-          type="button"
-          class="operacao-alert btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('+', 'alert');"
-        >
-          <i class="small material-icons right">add</i>
-          Soma
-        </button>
-        <button
-          type="button"
-          class="operacao-alert btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('-', 'alert');"
-        >
-          <i class="small material-icons right">remove</i>
-          Subtração
-        </button>
-        <button
-          type="button"
-          class="operacao-alert btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('*', 'alert');"
-        >
-          <i class="small material-icons right">clear</i>
-          Multiplicação
-        </button>
-        <button
-          type="button"
-          class="operacao-alert btn waves-effect waves-light blue darken-1"
-          v-on:click="calcular('/', 'alert');"
-        >
-          <i class="small material-icons right">call_split</i>
-          Divisão
-        </button>
-      </div>
-      <div id="botoes-notificacao"
-        v-if="mostrarnotificacao"
-      >
-        <button
-          type="button"
-          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
-          v-on:click="notificar('+');"
-        >
-          <i class="small material-icons right">add</i>
-          Soma
-        </button>
-        <button
-          type="button"
-          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
-          v-on:click="notificar('-');"
-        >
-          <i class="small material-icons right">remove</i>
-          Subtração
-        </button>
-        <button
-          type="button"
-          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
-          v-on:click="notificar('*');"
-        >
-          <i class="small material-icons right">clear</i>
-          Multiplicação
-        </button>
-        <button
-          type="button"
-          class="operacao-notificacao btn waves-effect waves-light deep-purple lighten-1"
-          v-on:click="notificar('/');"
-        >
-          <i class="small material-icons right">call_split</i>
-          Divisão
-        </button>
-      </div>
-      <div id="modal-operacoes" ref="modalOperacoes" class="modal">
-        <div class="modal-content">
-          <div id="visor" class="indigo lighten-4 right-align">
-            <h5>{{ resultado }}</h5>
+              MODO CLÁSSICO
+            </div>
           </div>
-          <div id="controle-basico"
-            class="center-align"
+          <div id="visor"
+            class="row no-margin-bottom indigo lighten-4 right-align"
+          >
+            {{ resultado }}
+          </div>
+          <div id="modo-basico"
+            class="row no-margin-bottom"
             v-if="modo == 'basico'"
           >
-            <input v-model="numero1" placeholder="Digite um Número">
-            <input v-model="numero2" placeholder="Digite um Número">
-            <button
-              type="button"
-              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
-              v-on:click="calcular('+', 'modal');"
+            <div id="numeros"
+              class="col s12 no-padding"
             >
-              <i class="large material-icons right">add</i>
-              Soma
-            </button>
-            <button
-              type="button"
-              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
-              v-on:click="calcular('-', 'modal');"
+              <input v-model="numero1" placeholder="Digite o primeiro número">
+              <input v-model="numero2" placeholder="Digite o segundo número">
+            </div>
+            <div id="operacoes"
+              class="col s12 no-padding"
             >
-              <i class="large material-icons right">remove</i>
-              Subtração
-            </button>
-            <button
-              type="button"
-              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
-              v-on:click="calcular('*', 'modal');"
-            >
-              <i class="large material-icons right">clear</i>
-              Multiplicação
-            </button>
-            <button
-              type="button"
-              class="operacao-modal btn waves-effect waves-light deep-purple lighten-1"
-              v-on:click="calcular('/', 'modal');"
-            >
-              <i class="large material-icons right">call_split</i>
-              Divisão
-            </button>
+              <button
+                type="button"
+                class="col s3 btn-small waves-effect waves-light darken-2"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
+                v-on:click="calcular('+');"
+              >
+                <i class="large material-icons">add</i>
+              </button>
+              <button
+                type="button"
+                class="col s3 btn-small waves-effect waves-light darken-2"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
+                v-on:click="calcular('-');"
+              >
+                <i class="large material-icons">remove</i>
+              </button>
+              <button
+                type="button"
+                class="col s3 btn-small waves-effect waves-light darken-2"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
+                v-on:click="calcular('*');"
+              >
+                <i class="large material-icons">clear</i>
+              </button>
+              <button
+                type="button"
+                class="col s3 btn-small waves-effect waves-light darken-2"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
+                v-on:click="calcular('/');"
+              >
+                <i class="large material-icons">call_split</i>
+              </button>
+            </div>
           </div>
-          <div id="controle-classico"
+          <div id="modo-classico"
+            class="row no-margin-bottom"
             v-if="modo == 'classico'"
           >
-            <div id="expressao">
+            <div id="expressao"
+              class="col s12 no-padding"
+            >
               <input v-model="expressao" placeholder="Digite uma Expressão" v-on:keyup.enter="calcular('expressao');">
             </div>
-            <div id="botoes-classicos">
+            <div id="botoes-classico"
+              class="col s12 no-padding"
+            >
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('1');"
               >
                 1
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('2');"
               >
                 2
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('3');"
               >
                 3
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('4');"
               >
                 4
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('5');"
               >
                 5
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('6');"
               >
                 6
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('7');"
               >
                 7
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('8');"
               >
                 8
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('9');"
               >
                 9
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('0');"
               >
                 0
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('(');"
               >
                 (
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao(')');"
               >
                 )
               </div>
               <div
-                style="grid-column-start: 1; grid-column-end: 3;"
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s4 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('.');"
               >
                 .
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao(' + ');"
               >
                 +
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao(' - ');"
               >
                 -
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao(' * ');"
               >
                 *
               </div>
               <div
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s2 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao(' / ');"
               >
                 /
               </div>
               <div
-                style="grid-column-start: 1; grid-column-end: 3;"
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s4 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('apaga');"
               >
                 ←
               </div>
               <div
-                style="grid-column-start: 3; grid-column-end: 5;"
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s4 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="construirExpressao('');"
               >
                 C
               </div>
               <div
-                style="grid-column-start: 5; grid-column-end: 7;"
-                class="botao-classico white-text waves-effect waves-light deep-purple lighten-1"
+                class="col s4 white-text waves-effect waves-light darken-2 center-align"
+                :class="{ 'teal': cor == 'teal',
+                          'blue': cor == 'blue',
+                          'deep-purple': cor == 'deep-purple',
+                          'red': cor == 'red',
+                          'pink': cor == 'pink'
+                        }"
                 v-on:click="calcular('expressao');"
               >
                 =
@@ -400,32 +422,118 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button 
-            type="button"
-            style="float: left; margin-right: 8px;"
-            class="waves-effect waves-light btn-small pink lighten-1"
-            v-bind:class="{'darken-2': modo == 'classico'}"
-            @click="verModo('classico')"
+        <div id="historico"
+          class="col l6 s12"
+        >
+          <div 
+            class="row no-margin-bottom"
           >
-            Modo Clássico
-          </button>
-          <button 
-            type="button"
-            style="float: left; margin-right: 8px;"
-            class="waves-effect waves-light btn-small pink lighten-1"
-            v-bind:class="{'darken-2': modo == 'basico'}"
-            @click="verModo('basico')"
+            <table id="tabela-historico" class="striped highlight centered indigo lighten-4"> <!-- ALGUMAS TAGS TÊM LIMITAÇÃO SOBRE QUAIS TAGS PODEM EXISTIR POR DENTRO, <table> É UMA DELAS -->
+              <thead>
+                <tr>
+                  <th style="width: 80%;">
+                    HISTÓRICO DE CÁLCULO
+                  </th>
+                  <th style="width: 20%;">
+                    <button 
+                      class="btn-small waves-effect waves-light pink lighten-1 tooltipped"
+                      data-position="left" data-tooltip="Limpar histórico"
+                      v-on:click="limparHistorico"
+                    >
+                      <i class="small material-icons">delete_sweep</i>
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- RENDERIZANDO DIRETAMENTE, SEM USAR UM COMPONENTE -->
+                <!-- <tr
+                  class="scale-transition"
+                  v-for="(item, indice) in arrayhistorico"
+                  v-bind:key="indice"
+                >
+                  <td>
+                    {{ item.registro }}
+                  </td>
+                </tr> -->
+                <!-- USANDO COMPONENTE PELO ATRIBUTO is -->
+                <tr
+                  class="scale-transition"
+                  is="linha-historico"
+                  v-for="(item, indice) in arrayhistorico"
+                  v-bind:key="indice"
+                  v-bind:itemhistorico="item"
+                  v-bind:indice="indice"
+                  v-bind:remover-historico="removerHistorico"
+                >
+                </tr>
+                <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <component> PELO ATRIBUTO is -->
+                <!-- <template>
+                  <component
+                    class="scale-transition"
+                    is="linha-historico"
+                    v-for="(item, indice) in arrayhistorico"
+                    v-bind:key="indice"
+                    v-bind:itemhistorico="item"
+                    v-bind:indice="indice"
+                    v-bind:remover-historico="removerHistorico"
+                  >
+                  </component>
+                </template> -->
+                <!-- USANDO COMPONENTE PELA TAG <template> COM A TAG <nome-do-componente> -->
+                <!-- <template>
+                  <linha-historico
+                    class="scale-transition"
+                    v-for="(item, indice) in arrayhistorico"
+                    v-bind:key="indice"
+                    v-bind:itemhistorico="item"
+                    v-bind:indice="indice"
+                    v-bind:remover-historico="removerHistorico"
+                  >
+                  </linha-historico>
+                </template> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="fixed-action-btn" style="left: 23px; width: 56px">
+          <a class="btn-floating btn-large"
+          :class="{ 'teal': cor == 'teal',
+                    'blue': cor == 'blue',
+                    'deep-purple': cor == 'deep-purple',
+                    'red': cor == 'red',
+                    'pink': cor == 'pink'
+                  }"
           >
-            Modo Básico
-          </button>
-          <button 
-            type="button"
-            class="waves-effect waves-light btn-small"
-            @click="resetModal"
-          >
-            Fechar
-          </button>
+            <i class="large material-icons">color_lens</i>
+          </a>
+          <ul>
+            <li @click="corBotoes('teal');">
+              <a class="btn-floating teal darken-2 waves-effect waves-light">
+                <i class="material-icons">invert_colors</i>
+              </a>
+            </li>
+            <li @click="corBotoes('blue');">
+              <a class="btn-floating blue darken-2 waves-effect waves-light">
+                <i class="material-icons">invert_colors</i>
+              </a>
+            </li>
+            <li @click="corBotoes('deep-purple');">
+              <a class="btn-floating deep-purple darken-2 waves-effect waves-light">
+                <i class="material-icons">invert_colors</i>
+              </a>
+            </li>
+            <li @click="corBotoes('red');">
+              <a class="btn-floating red darken-2 waves-effect waves-light">
+                <i class="material-icons">invert_colors</i>
+              </a>
+            </li>
+            <li @click="corBotoes('pink');">
+              <a class="btn-floating pink waves-effect waves-light">
+                <i class="material-icons">invert_colors</i>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -440,159 +548,101 @@
           props: [
             'itemhistorico',
             'indice',
-            'deletar'
+            'removerHistorico'
           ],
+
           template:  `<tr>
                         <td
-                          style="width:80%"
+                          style="width: 80%; text-align: right"
                         >
                           {{ itemhistorico.registro }}
                         </td>
                         <td
-                          style="width:20%"
+                          style="width: 20%"
                         >
                           <button
                             type="button"
-                            class="btn tooltipped waves-effect waves-light red darken-2"
-                            data-position="left" data-tooltip="Deletar Registro"
-                            v-on:click="deletar(indice)"
+                            class="btn-small waves-effect waves-light pink lighten-1 tooltipped"
+                            data-position="left" data-tooltip="Remover do Histórico"
+                            v-on:click="removerHistorico(indice)"
                           >
                             <i class="small material-icons">delete</i>
                           </button>
                         </td>
                       </tr>`
       });
+
       let CalculaVue = new Vue({
         el: '#calcula-vue',
+
         data: {
           arrayhistorico: [],
-          mostraralert: false,
-          mostrarnotificacao: false,
-          modo: 'basico',
+          cor: 'teal',
           expressao: '',
+          funcoes: '',
+          modo: 'basico',
           numero1: '',
           numero2: '',
           resultado: '_'
         },
-        created() {
-          document.addEventListener('DOMContentLoaded', function () {
-            if (!Notification) {
-              alert('Seu navegador não suporta notificações. Tente um baseado em Chromium.');
-              return;
-            }
-            if (Notification.permission !== "granted")
-              Notification.requestPermission();
-            M.Modal.init(this.querySelectorAll(".modal")); // AQUI this = document
-          });
+
+        mounted() {
+          this.checarCor();
+          M.FloatingActionButton.init(this.$el.querySelectorAll(".fixed-action-btn"), { direction: 'right', hoverEnabled: false, toolbarEnabled: false });
+          M.Modal.init(this.$el.querySelectorAll(".modal"));
+          M.Tooltip.init(this.$el.querySelectorAll(".tooltipped"), {enterDelay: 500, exitDelay: 0, inDuration: 250, outDuration: 0});
         },
+
         updated() {
-          M.Tooltip.init(document.querySelectorAll(".tooltipped"));
+          M.Tooltip.init(this.$el.querySelectorAll(".tooltipped"), {enterDelay: 500, exitDelay: 0, inDuration: 250, outDuration: 0});
         },
+
         methods: {
-          calcular(operacao, origem) {
+          verModo(modo) {
+            this.modo = modo;
+          },
+
+          construirExpressao(caractere) {
+            if (caractere == '') {
+              this.expressao = '';
+            } else if (caractere == 'apaga') {
+              this.expressao = this.expressao.slice(0, -1);
+            } else {
+              this.expressao += caractere;
+            }
+          },
+
+          calcular(operacao) {
             let exp = this.expressao;
             let n1 = null;
             let n2 = null;
             let res = null;
-            if (origem == 'alert') {
-              n1 = Number(prompt('Digite o primeiro número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-              n2 = Number(prompt('Digite o segundo número!').replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-            } else if (origem == 'modal') {
-              n1 = Number(this.numero1.replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-              n2 = Number(this.numero2.replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
-            }
-            if (n1 == '' || n1 == null || n1 == undefined) {
-              n1 = NaN;
-            }
-            if (n2 == '' || n2 == null || n2 == undefined) {
-              n2 = NaN;
-            }
-            if (operacao == '+') {
-              res = n1 + n2;
-              if (isNaN(res)) {
-                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
-                return;
-              }
-              origem == 'modal' ? this.resultado = res : alert('A soma dos números é = ' + res);
-              this.adicionarHistorico('', n1, n2, res, operacao);
-            } else if (operacao == '-') {
-              res = n1 - n2;
-              if (isNaN(res)) {
-                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
-                return;
-              }
-              origem == 'modal' ? this.resultado = res : alert('A subtração dos números é = ' + res);
-              this.adicionarHistorico('', n1, n2, res, operacao);
-            } else if (operacao == '*') {
-              res = n1 * n2;
-              if (isNaN(res)) {
-                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
-                return;
-              }
-              origem == 'modal' ? this.resultado = res : alert('A multiplicação dos números é = ' + res);
-              this.adicionarHistorico('', n1, n2, res, operacao);
-            } else if (operacao == "/") {
-              res = n1 / n2;
-              if (isNaN(res)) {
-                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
-                return;
-              }
-              origem == 'modal' ? this.resultado = res : alert('A divisão dos números é = ' + res);
-              this.adicionarHistorico('', n1, n2, res, operacao);
-            } else if (operacao == 'expressao' && this.expressao != '') {
+            n1 = Number(this.numero1.replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+            n2 = Number(this.numero2.replace(/[^0-9.]/g,'').replace(/\.(?=.*\.)/, ''));
+            if (n1 == '' || n1 == null || n1 == undefined) { n1 = NaN; }
+            if (n2 == '' || n2 == null || n2 == undefined) { n2 = NaN; }
+            if (operacao == '+') { res = n1 + n2; }
+            if (operacao == '-') { res = n1 - n2; }
+            if (operacao == '*') { res = n1 * n2; }
+            if (operacao == "/") { res = n1 / n2; }
+            if (operacao == 'expressao' && this.expressao != '') {
               try {
                 res = eval(exp);
                 this.resultado = res;
-                this.adicionarHistorico(exp, '', '', res, '');
+                return this.adicionarHistorico(exp, '', '', res, '');
               } catch (erro) {
-                M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+                return M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
               }
-            } else if (this.expressao == '') {
-              M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
+            } else if (operacao == 'expressao' && this.expressao == '') {
+              return M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
             }
-          },
-          notificar(operacao) {
-            if (Notification.permission !== "granted") {
-              Notification.requestPermission();
-            }
-            if (operacao == '+') {
-              var notification = new Notification('Notificação', {
-                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-                body: "Olá! Você realizará uma soma!",
-              });
-              notification.onclick = function () {
-                CalculaVue.calcular(operacao, 'alert');
-                // window.open("COLOQUE UMA URL");
-              };
-            } else if (operacao == '-') {
-              var notification = new Notification('Notificação', {
-                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-                body: "Olá! Você realizará uma subtração!",
-              });
-              notification.onclick = function () {
-                CalculaVue.calcular(operacao, 'alert');
-                // window.open("COLOQUE UMA URL");
-              };
-            } else if (operacao == '*') {
-              var notification = new Notification('Notificação', {
-                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-                body: "Olá! Você realizará uma multiplicação!",
-              });
-              notification.onclick = function () {
-                CalculaVue.calcular(operacao, 'alert');
-                // window.open("COLOQUE UMA URL");
-              };
+            if (isNaN(res)) {
+              return M.toast({html: 'Expressão Inválida!', classes: 'white-text red darken-2 z-depth-2'});
             } else {
-              var notification = new Notification('Notificação', {
-                // icon: 'COLOQUE UMA URL OU CAMINHO DE IMAGEM',
-                body: "Olá! Você realizará uma divisão!",
-              });
-              notification.onclick = function () {
-                CalculaVue.calcular(operacao, 'alert');
-                // window.open("COLOQUE UMA URL");
-              };
+              return this.adicionarHistorico('', n1, n2, res, operacao);
             }
           },
+
           adicionarHistorico(expressao, numero1, numero2, resultado, operacao) {
             let historico = '';
             if (expressao != '') {
@@ -602,61 +652,30 @@
             }
             this.arrayhistorico.push({ "registro":historico });
           },
+
+          removerHistorico(indice) {
+            this.$el.querySelectorAll('.tooltipped').forEach(el => {el.M_Tooltip.close()});
+            this.arrayhistorico.splice(indice, 1);
+            M.toast({html: 'Registro Removido!', classes: 'white-text blue darken-2 z-depth-2'});
+          },
+
           limparHistorico() {
             const itens = document.getElementsByClassName("scale-transition");
             for (var i=0; i < itens.length; i++) {
               itens[i].className = "scale-transition scale-out";
             }
-            setTimeout(this.limparArray, 400);
+            setTimeout(() => {this.arrayhistorico = [];}, 400);
+            M.toast({html: 'Histórico Limpo!', classes: 'white-text blue darken-2 z-depth-2'});
           },
-          deletar(indice) {
-            this.arrayhistorico.splice(indice, 1);
-            M.toast({html: 'Registro Deletado!', classes: 'white-text blue darken-2 z-depth-2'});
+
+          corBotoes(cor) {
+            this.cor = cor;
+            window.localStorage.setItem('cor', cor);
           },
-          limparArray() {
-            this.arrayhistorico = [];
-          },
-          verAlert() {
-            if (this.mostraralert) {
-              this.mostraralert = false;
-            } else {
-              this.mostrarnotificacao = false;
-              this.mostraralert = true;
-            }
-          },
-          verNotificacoes() {
-            if (this.mostrarnotificacao) {
-              this.mostrarnotificacao = false;
-            } else {
-              this.mostraralert = false;
-              this.mostrarnotificacao = true;
-            }
-          },
-          verModo(modo) {
-            if (modo == 'classico') {
-              this.modo = 'classico';
-            } else if (modo == 'basico') {
-              this.modo = 'basico';
-            }
-          },
-          abrirModal() {
-            M.Modal.getInstance(this.$refs.modalOperacoes).open();
-          },
-          resetModal() {
-            this.modo = 'basico'
-            this.expressao = '';
-            this.numero1 = '';
-            this.numero2 = '';
-            this.resultado = '_';
-            M.Modal.getInstance(this.$refs.modalOperacoes).close();
-          },
-          construirExpressao(caractere) {
-            if (caractere == '') {
-              this.expressao = '';
-            } else if (caractere == 'apaga') {
-              this.expressao = this.expressao.slice(0, -1)
-            } else {
-              this.expressao += caractere;
+
+          checarCor() {
+            if (window.localStorage.getItem('cor') != null) {
+              this.cor = window.localStorage.getItem('cor');
             }
           }
         }
